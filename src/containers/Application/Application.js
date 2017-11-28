@@ -23,11 +23,11 @@ export class Application extends Component {
   }
 
   componentWillMount () {
-
+    // Empty
   }
 
   componentWillReceiveProps (nextProps) {
-
+    // Empty
   }
 
   render () {
