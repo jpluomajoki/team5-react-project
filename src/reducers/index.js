@@ -1,18 +1,15 @@
-const initialState = {
-  regionLevel: "",
-  region: "",
-  scenarioCollection: "",
-  scenarios: [],
-  period: "",
-  indicators: [],
-  graphType: ""
-};
+import { combineReducers } from 'redux'
+import { routerReducer as routing } from 'react-router-redux'
 
-const reducer = (state = initialState, action) => {
-  switch (action.type) {
-    default:
-      return state;
-  }
-};
+import demo from './demo'
 
-export default reducer;
+const reducers = {
+  // add reducers here
+
+  demo
+}
+
+export default combineReducers({
+  ...reducers,
+  routing
+})

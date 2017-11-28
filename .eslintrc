@@ -1,0 +1,14 @@
+{
+  "parser": "babel-eslint",
+  "extends": [
+    "standard",
+    "standard-react"
+  ],
+  "globals": {
+    "__DEV__": true,
+    "__PROD__": true
+  },
+  "env": {
+    "browser": true
+  }
+}

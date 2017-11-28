@@ -1,21 +1,15 @@
-# See https://help.github.com/ignore-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-
-# testing
-/coverage
-
-# production
-/build
-
-# misc
-.DS_Store
-.env.local
-.env.development.local
-.env.test.local
-.env.production.local
-
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
+node_modules
+.idea
+*.log
+build
+build-dll/
+build-dll/dependencies.json
+build-dll/deps.dll.js
+build-dll/deps.dll.js.map
+build-dll/deps.json
+dll/
+dlls/dependencies.json
+dlls/deps.dll.js
+dlls/deps.dll.js.map
+dlls/deps.json
+bash.exe.stackdump

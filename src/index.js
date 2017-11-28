@@ -1,23 +1,42 @@
-import React from "react";
-import { render } from "react-dom";
-import { createStore, applyMiddleware } from "redux";
-import { Provider } from "react-redux";
-import App from "./containers/App";
-import thunk from "redux-thunk";
-import reducer from "./reducers";
-import registerServiceWorker from "./registerServiceWorker";
+import React from 'react'
+import { render } from 'react-dom'
+import { browserHistory } from 'react-router'
+import { syncHistoryWithStore } from 'react-router-redux'
+import configureStore from './store'
+import Root from 'containers/Root'
 
-const store = createStore(
-  reducer,
-  window.__REDUX_DEVTOOLS_EXTENSION__ && window.__REDUX_DEVTOOLS_EXTENSION__(),
-  applyMiddleware(thunk)
-);
+const initialState = {
+  // Empty
+}
 
-render(
-  <Provider store={store}>
-    <App />
-  </Provider>,
-  document.getElementById("root")
-);
+const store = configureStore(initialState, browserHistory)
+const history = syncHistoryWithStore(browserHistory, store)
+const rootElement = document.getElementById('root')
 
-registerServiceWorker();
+if (process.env.NODE_ENV === 'production') {
+  render(<Root store={store} history={history} />, rootElement)
+} else {
+  const AppContainer = require('react-hot-loader').AppContainer
+
+  // Trick babel to avoid hoisting <AppContainer />
+  // transform-react-constant-elements
+  const noHoist = {}
+
+  render((
+    <AppContainer {...noHoist}>
+      <Root store={store} history={history} />
+    </AppContainer>
+  ), rootElement)
+
+  if (module.hot) {
+    module.hot.accept('./containers/Root', () => {
+      System.import('./containers/Root').then((NextRootContainer) => {
+        render((
+          <AppContainer {...noHoist}>
+            <NextRootContainer store={store} history={history} />
+          </AppContainer>
+        ), rootElement)
+      })
+    })
+  }
+}
