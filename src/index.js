@@ -7,6 +7,7 @@ import Root from 'containers/Root'
 
 const initialState = {
   // Empty
+
 }
 
 const store = configureStore(initialState, browserHistory)
