@@ -7,6 +7,7 @@ import {
   ControlLabel,
   FormControl
 } from 'react-bootstrap'
+import Sidebar from '../Sidebar'
 
 const initialState = {
   // Empty
@@ -19,84 +20,6 @@ export class Home extends Component {
 
   static defaultProps = {
     // Empty
-  }
-
-  get sidebar () {
-    return (
-      <div className={styles.sidebar}>
-        <FormGroup>
-          <ControlLabel>Region level</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-
-        <FormGroup>
-          <ControlLabel>Region</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-
-        <FormGroup>
-          <ControlLabel>Scenario collection</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-
-        <FormGroup>
-          <ControlLabel>Scenario</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-
-        <FormGroup>
-          <ControlLabel>Scenario</ControlLabel>
-          <FormControl componentClass='select' multiple>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-
-        <FormGroup>
-          <ControlLabel>Indicators</ControlLabel>
-          <FormControl componentClass='select' multiple>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-
-        <FormGroup>
-          <ControlLabel>Period</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-
-        <FormGroup>
-          <ControlLabel>Graph type</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-      </div>
-    )
   }
 
   get content () {
@@ -122,7 +45,7 @@ export class Home extends Component {
   render () {
     return (
       <div className={styles.component}>
-        {this.sidebar}
+        <Sidebar />
         {this.content}
       </div>
     )

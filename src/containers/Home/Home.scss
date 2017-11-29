@@ -8,18 +8,6 @@
   height: calc(100% - #{$header-height});
 }
 
-.sidebar {
-  display: flex;
-  flex-flow: column;
-
-  padding: $space-m;
-  width: $sidebar-width;
-  max-height: calc(100vh - #{$header-height});
-
-  background-color: $color-sidebar-bg;
-  overflow: scroll;
-}
-
 .content {
   flex-grow: 4;
   display: flex;

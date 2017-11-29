@@ -1,8 +1,9 @@
 import { combineReducers } from 'redux'
 import { routerReducer as routing } from 'react-router-redux'
+import sidebar from './sidebar'
 
 const reducers = {
-  // add reducers here
+  sidebar
 }
 
 export default combineReducers({
