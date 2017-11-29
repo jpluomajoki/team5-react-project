@@ -83,6 +83,8 @@
     "babel-polyfill": "^6.26.0",
     "lodash": "^4.17.4",
     "react": "^15.6.1",
+    "react-bootstrap": "^0.31.5",
+    "react-bootstrap-extended": "0.0.5",
     "react-dom": "^15.6.1",
 =======
     "bootstrap": "^3.3.7",
