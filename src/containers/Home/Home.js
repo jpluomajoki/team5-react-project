@@ -1,8 +1,12 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
-
-import { demoFetch } from 'actions/demo'
+import styles from './Home.scss'
+import {
+  FormGroup,
+  ControlLabel,
+  FormControl
+} from 'react-bootstrap'
 
 const initialState = {
   // Empty
@@ -10,49 +14,95 @@ const initialState = {
 
 export class Home extends Component {
   static propTypes = {
-    demoFetch: PropTypes.func,
-    error: PropTypes.object,
-    pending: PropTypes.bool,
-    data: PropTypes.object
-    // TODO: ^ to be removed
+    // Empty
   }
 
   static defaultProps = {
     // Empty
   }
 
-  get error () {
-    if (!this.props.error) {
-      return null
-    }
-
-    console.log(this.props.error)
-    const errorMessage = 'Some error message'
-
+  get sidebar () {
     return (
-      <p>{errorMessage}</p>
+      <div className={styles.sidebar}>
+        <FormGroup>
+          <ControlLabel>Region level</ControlLabel>
+          <FormControl componentClass='select'>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Region</ControlLabel>
+          <FormControl componentClass='select'>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Scenario collection</ControlLabel>
+          <FormControl componentClass='select'>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Scenario</ControlLabel>
+          <FormControl componentClass='select'>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Scenario</ControlLabel>
+          <FormControl componentClass='select' multiple>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Indicators</ControlLabel>
+          <FormControl componentClass='select' multiple>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Period</ControlLabel>
+          <FormControl componentClass='select'>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+
+        <FormGroup>
+          <ControlLabel>Graph type</ControlLabel>
+          <FormControl componentClass='select'>
+            <option value='option1'>option 1</option>
+            <option value='option2'>option 2</option>
+            <option value='option3'>option 3</option>
+          </FormControl>
+        </FormGroup>
+      </div>
     )
   }
 
-  get data () {
-    if (!this.props.data) {
-      return null
-    }
-
-    console.log(this.props.data)
-    const dataToShow = 'Show some data or whatever'
-
+  get content () {
     return (
-      <p>{dataToShow}</p>
+      <div className={styles.content} />
     )
-  }
-
-  handleFetchClick = () => {
-    if (this.props.pending) {
-      return
-    }
-
-    this.props.demoFetch()
   }
 
   constructor (props) {
@@ -71,28 +121,20 @@ export class Home extends Component {
 
   render () {
     return (
-      <div>
-        <button onClick={this.handleFetchClick}>Fetch</button>
-        {this.error}
-        {this.data}
-
-        <p>header</p>
-        <p>left sidebar</p>
-        <p>right sidebar</p>
-        <p>content section</p>
+      <div className={styles.component}>
+        {this.sidebar}
+        {this.content}
       </div>
     )
   }
 }
 
 const mapStateToProps = (state) => ({
-  pending: state.demo.pending,
-  error: state.demo.error,
-  data: state.demo.data
+
 })
 
 const mapActionsToProps = {
-  demoFetch
+
 }
 
 export default connect(
