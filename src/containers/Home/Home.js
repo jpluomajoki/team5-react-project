@@ -11,14 +11,15 @@ import {
   ControlLabel,
   FormControl
 } from 'react-bootstrap'
-import RadarGraph from 'component/RadarGraph'
-import BarGraph from 'component/BarGraph'
 
 import * as MenuOptions from 'constants/MenuOptions'
 
+import RadarGraph from 'component/RadarGraph'
+import BarGraph from 'component/BarGraph'
+import Table from 'component/Table'
+
 const initialState = {
-  // graphOption: MenuOptions.MULTI_GRAPHS
-  graphOption: MenuOptions.POLAR_GRAPH
+  graphOption: MenuOptions.MULTI_GRAPHS
 }
 
 const radarData = [
@@ -38,6 +39,10 @@ const barData = [
   {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
   {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
   {name: 'Page G', uv: 3490, pv: 4300, amt: 2100}
+]
+
+const tableData = [
+
 ]
 
 export class Home extends Component {
@@ -151,24 +156,38 @@ export class Home extends Component {
   }
 
   get innerContent () {
-    let graphElement = null
+    let element = null
     switch (this.state.graphOption) {
+      case MenuOptions.MULTI_GRAPHS: {
+        element = (
+          <div>
+            <RadarGraph data={radarData} />
+            <RadarGraph data={radarData} />
+            <RadarGraph data={radarData} />
+          </div>
+        )
+        break
+      }
       case MenuOptions.POLAR_GRAPH: {
-        graphElement = <RadarGraph data={radarData} />
+        element = <RadarGraph data={radarData} />
         break
       }
       case MenuOptions.BAR_GRAPH: {
-        graphElement = <BarGraph data={barData} />
+        element = <BarGraph data={barData} />
+        break
+      }
+      case MenuOptions.TABLE: {
+        element = <Table data={tableData} />
         break
       }
       default: {
-        graphElement = null
+        element = null
       }
     }
 
     return (
       <div className={styles.innerContent}>
-        {graphElement}
+        {element}
       </div>
     )
   }
