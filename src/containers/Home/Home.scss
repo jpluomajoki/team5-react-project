@@ -1,26 +1,40 @@
 @import 'base';
 
 .component {
-  display: flex;
-  flex-flow: row nowrap;
+  // Empty
+}
 
-  width: 100%;
-  height: calc(100% - #{$header-height});
+.content {
+  display: flex;
+  flex-flow: row;
+}
+
+.header {
+  border-radius: 0;
+  margin-bottom: 0;
 }
 
 .sidebar {
+  position: static;
+  left: 0;
+  top: $header-height;
+  bottom: 0;
+  width: $sidebar-width;
+
   display: flex;
   flex-flow: column;
 
   padding: $space-m;
-  width: $sidebar-width;
-  max-height: calc(100vh - #{$header-height});
-
   background-color: $color-sidebar-bg;
   overflow: scroll;
 }
 
-.content {
-  flex-grow: 4;
+.innerContent {
   display: flex;
+  flex-flow: column;
+  align-items: center;
+  flex-grow: 4;
+  padding-top: $space-l;
+
+  overflow: scroll;
 }
