@@ -2,18 +2,11 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import styles from './Home.scss'
-import {
-  Navbar,
-  Nav,
-  NavDropdown,
-  MenuItem,
-  FormGroup,
-  ControlLabel,
-  FormControl
-} from 'react-bootstrap'
 
 import * as MenuOptions from 'constants/MenuOptions'
 
+import Header from 'component/Header'
+import Sidebar from 'component/Sidebar'
 import RadarGraph from 'component/RadarGraph'
 import BarGraph from 'component/BarGraph'
 import Table from 'component/Table'
@@ -68,90 +61,16 @@ export class Home extends Component {
 
   get header () {
     return (
-      <Navbar className={styles.header}>
-        <Nav pullRight>
-          <NavDropdown title='Menu'>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.MULTI_GRAPHS)}>Multi graphs</MenuItem>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.POLAR_GRAPH)}>Polar graphs</MenuItem>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.BAR_GRAPH)}>Bar graphs</MenuItem>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.TABLE)}>Table</MenuItem>
-            <MenuItem divider />
-            <MenuItem onClick={this.handlePrintClick}>Print</MenuItem>
-            <MenuItem onClick={this.handleDownloadClick}>Download</MenuItem>
-          </NavDropdown>
-        </Nav>
-      </Navbar>
+      <Header
+        onMenuItemClickHandler={this.handleMenuGraphOptionClick}
+        onPrintClickHandler={this.handlePrintClick}
+        onDownloadClickHandler={this.handleDownloadClick} />
     )
   }
 
   get sidebar () {
     return (
-      <div className={styles.sidebar}>
-        <FormGroup>
-          <ControlLabel>Region level</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Region</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Scenario collection</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Scenario</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Scenario</ControlLabel>
-          <FormControl componentClass='select' multiple>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Indicators</ControlLabel>
-          <FormControl componentClass='select' multiple>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Period</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Graph type</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-      </div>
+      <Sidebar />
     )
   }
 
