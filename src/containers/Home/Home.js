@@ -1,9 +1,11 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import styles from './Home.scss'
 
 import * as MenuOptions from 'constants/MenuOptions'
+import { DUMMY_DATA } from 'constants/Constants'
 
 import Header from 'component/Header'
 import Sidebar from 'component/Sidebar'
@@ -12,7 +14,13 @@ import BarGraph from 'component/BarGraph'
 import Table from 'component/Table'
 
 const initialState = {
-  graphOption: MenuOptions.MULTI_GRAPHS
+  graphOption: MenuOptions.MULTI_GRAPHS,
+
+  selectedValues: {
+    scenarios: [],
+    indicatorCategories: [],
+    timePeriods: ''
+  }
 }
 
 const radarData = [
@@ -59,6 +67,20 @@ export class Home extends Component {
     console.log('Download')
   }
 
+  // Note: in order to use this event handler
+  // the target needs to have a name and value!
+  handleSidebarValueChange = (event) => {
+    const { selectedValues } = this.state
+
+    selectedValues[event.target.name] = event.target.value
+
+    this.setState({
+      selectedValues
+    }, () => {
+      console.log(this.state.selectedValues)
+    })
+  }
+
   get header () {
     return (
       <Header
@@ -70,12 +92,15 @@ export class Home extends Component {
 
   get sidebar () {
     return (
-      <Sidebar />
+      <Sidebar
+        options={DUMMY_DATA[0]}
+        onSelectValueChange={this.handleSidebarValueChange} />
     )
   }
 
   get innerContent () {
     let element = null
+
     switch (this.state.graphOption) {
       case MenuOptions.MULTI_GRAPHS: {
         element = (
