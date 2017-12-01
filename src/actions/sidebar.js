@@ -19,3 +19,23 @@ export function selectRegionLevel (regionLevelId) {
     }
   }
 }
+
+export function fetchRegions (regionLevelId) {
+  return {
+    type: ActionTypes.SIDEBAR_FETCH_REGIONS,
+    payload: {
+      request: {
+        url: `/regionLevels/${regionLevelId}/regions`
+      }
+    }
+  }
+}
+
+export function selectRegion (regionId) {
+  return {
+    type: ActionTypes.SIDEBAR_SELECT_REGION,
+    payload: {
+      id: regionId
+    }
+  }
+}

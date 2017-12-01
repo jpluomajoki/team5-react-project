@@ -5,6 +5,7 @@ const initialState = {
   data: {
     availableChoices: {
       regionLevels: [],
+      regions: [],
       placeholder: []
     },
     selectedChoices: {
@@ -32,8 +33,13 @@ const selectionsReducer = reduce(initialState, {
         ...state.data.availableChoices,
         regionLevels: payload.data.map(child => ({
           name: child.name,
-          id: child.id
+          id: child.id,
+          description: child.description
         }))
+      },
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        regionLevel: payload.data[0].id
       }
     },
     error: null,
@@ -47,8 +53,44 @@ const selectionsReducer = reduce(initialState, {
     data: {
       ...state.data,
       selectedChoices: {
-        ...state.selectedChoices,
+        ...state.data.selectedChoices,
         regionLevel: payload.id
+      }
+    }
+  }),
+  [ActionTypes.SIDEBAR_FETCH_REGIONS]: () => ({
+    error: null,
+    pending: true
+  }),
+  [ActionTypes.SIDEBAR_FETCH_REGIONS + '_SUCCESS']: (state, { payload }) => ({
+    data: {
+      ...state.data,
+      availableChoices: {
+        ...state.data.availableChoices,
+        regions: payload.data.map(child => ({
+          name: child.name,
+          id: child.id,
+          scenarioCollections: child.scenarioCollections
+        }))
+      },
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        region: payload.data[0].id
+      }
+    },
+    error: null,
+    pending: false
+  }),
+  [ActionTypes.SIDEBAR_FETCH_REGIONS + '_ERROR']: (state, { payload }) => ({
+    error: payload.error,
+    pending: false
+  }),
+  [ActionTypes.SIDEBAR_SELECT_REGION]: (state, { payload }) => ({
+    data: {
+      ...state.data,
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        region: payload.id
       }
     }
   })
