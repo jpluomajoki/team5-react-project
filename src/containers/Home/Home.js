@@ -4,47 +4,31 @@ import { connect } from 'react-redux'
 import _ from 'lodash'
 import styles from './Home.scss'
 
+import * as DataUtils from 'utils/data'
 import * as MenuOptions from 'constants/MenuOptions'
 import { DUMMY_DATA } from 'constants/Constants'
 
 import Header from 'component/Header'
 import Sidebar from 'component/Sidebar'
+import MultiRadarGraph from 'component/MultiRadarGraph'
 import RadarGraph from 'component/RadarGraph'
 import BarGraph from 'component/BarGraph'
 import Table from 'component/Table'
 
 const initialState = {
-  graphOption: MenuOptions.MULTI_GRAPHS,
+  graphOption: MenuOptions.POLAR_GRAPH,
 
   selectedValues: {
+    regionLevel: '',
+    region: '',
+    scenarioCollection: '',
     scenarios: [],
     indicatorCategories: [],
-    timePeriods: ''
-  }
+    timePeriod: ''
+  },
+
+  data: null
 }
-
-const radarData = [
-  { subject: 'Math', A: 120, B: 110, fullMark: 150 },
-  { subject: 'Chinese', A: 98, B: 130, fullMark: 150 },
-  { subject: 'English', A: 86, B: 130, fullMark: 150 },
-  { subject: 'Geography', A: 99, B: 100, fullMark: 150 },
-  { subject: 'Physics', A: 85, B: 90, fullMark: 150 },
-  { subject: 'History', A: 65, B: 85, fullMark: 150 }
-]
-
-const barData = [
-  {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-  {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-  {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-  {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
-  {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-  {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-  {name: 'Page G', uv: 3490, pv: 4300, amt: 2100}
-]
-
-const tableData = [
-
-]
 
 export class Home extends Component {
   static propTypes = {
@@ -67,6 +51,23 @@ export class Home extends Component {
     console.log('Download')
   }
 
+  // // Format data when required fields are chosen
+  // postOnSidebarValueChange = () => {
+  //   const { selectedValues } = this.state
+  //   const { scenarios, indicatorCategories, timePeriod } = selectedValues
+  //
+  //   // Tmp 'validation'
+  //   if (scenarios.length === 0
+  //     || indicatorCategories.length === 0
+  //     || timePeriod === '') {
+  //     return
+  //   }
+  //
+  //   this.setState({
+  //     data: DataUtils.getIndicatorValuesPerScenarioForEachScenario(DUMMY_DATA[0], scenarios, indicatorCategories, timePeriod)
+  //   })
+  // }
+
   // Note: in order to use this event handler
   // the target needs to have a name and value!
   handleSidebarValueChange = (event) => {
@@ -74,11 +75,11 @@ export class Home extends Component {
 
     selectedValues[event.target.name] = event.target.value
 
-    this.setState({
-      selectedValues
-    }, () => {
-      console.log(this.state.selectedValues)
-    })
+    this.setState({ selectedValues })
+
+    // this.setState({
+    //   selectedValues
+    // }, this.postOnSidebarValueChange)
   }
 
   get header () {
@@ -99,31 +100,48 @@ export class Home extends Component {
   }
 
   get innerContent () {
-    let element = null
+    const { selectedValues } = this.state
+    const { scenarios, indicatorCategories, timePeriod } = selectedValues
 
+
+    // Tmp 'validation'
+    if (scenarios.length === 0
+      || indicatorCategories.length === 0
+      || timePeriod === '') {
+      return
+    }
+
+    // return (
+    //   <div className={styles.innerContent}>
+    //     <RadarGraph data={this.state.data[0]} />
+    //   </div>
+    // )
+
+    let element
+    let data
     switch (this.state.graphOption) {
       case MenuOptions.MULTI_GRAPHS: {
-        element = (
-          <div>
-            <RadarGraph data={radarData} />
-            <RadarGraph data={radarData} />
-            <RadarGraph data={radarData} />
-          </div>
-        )
+        data = DataUtils.getIndicatorValuesPerScenarioForEachScenario(DUMMY_DATA[0], scenarios, indicatorCategories, timePeriod)
+        element = _.map(data, (data, index) => {
+          return (
+            <RadarGraph key={index} data={data} />
+          )
+        })
         break
       }
       case MenuOptions.POLAR_GRAPH: {
-        element = <RadarGraph data={radarData} />
+        data = DataUtils.getIndicatorScenarioValuesPerIndicator(DUMMY_DATA[0], scenarios, indicatorCategories, timePeriod)
+        element = <MultiRadarGraph data={data} />
         break
       }
-      case MenuOptions.BAR_GRAPH: {
-        element = <BarGraph data={barData} />
-        break
-      }
-      case MenuOptions.TABLE: {
-        element = <Table data={tableData} />
-        break
-      }
+      // case MenuOptions.BAR_GRAPH: {
+      //   element = <BarGraph data={barData} />
+      //   break
+      // }
+      // case MenuOptions.TABLE: {
+      //   element = <Table data={tableData} />
+      //   break
+      // }
       default: {
         element = null
       }

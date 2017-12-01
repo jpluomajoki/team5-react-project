@@ -2,11 +2,13 @@
 
 .component {
   // Empty
+  height: 100%;
 }
 
 .content {
   display: flex;
   flex-flow: row;
+  height: 100%;
 }
 
 .innerContent {

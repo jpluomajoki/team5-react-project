@@ -203,7 +203,7 @@ export const DUMMY_DATA = [
     ],
     values: [
       {
-        scenarioId: 10,
+        scenarioId: 10,       // <- this one
         indicatorId: 120,
         timePeriodId: 20,
         value: 0.27
@@ -221,7 +221,7 @@ export const DUMMY_DATA = [
         value: 0.37
       },
       {
-        scenarioId: 10,
+        scenarioId: 10,     // <- this one
         indicatorId: 120,
         timePeriodId: 20,
         value: 0.13

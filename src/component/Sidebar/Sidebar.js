@@ -44,7 +44,10 @@ export default class Sidebar extends Component {
       <div className={styles.component}>
         <FormGroup>
           <ControlLabel>Region level</ControlLabel>
-          <FormControl componentClass='select'>
+          <FormControl
+            name='regionLevel'
+            componentClass='select'
+            onChange={onSelectValueChange}>
             <option value='option1'>option 1</option>
             <option value='option2'>option 2</option>
             <option value='option3'>option 3</option>
@@ -52,7 +55,10 @@ export default class Sidebar extends Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>Region</ControlLabel>
-          <FormControl componentClass='select'>
+          <FormControl
+            name='region'
+            componentClass='select'
+            onChange={onSelectValueChange}>
             <option value='option1'>option 1</option>
             <option value='option2'>option 2</option>
             <option value='option3'>option 3</option>
@@ -60,7 +66,10 @@ export default class Sidebar extends Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>Scenario collection</ControlLabel>
-          <FormControl componentClass='select'>
+          <FormControl
+            name='scenarioCollection'
+            componentClass='select'
+            onChange={onSelectValueChange}>
             <option value='option1'>option 1</option>
             <option value='option2'>option 2</option>
             <option value='option3'>option 3</option>
@@ -103,7 +112,7 @@ export default class Sidebar extends Component {
         <FormGroup>
           <ControlLabel>Time period</ControlLabel>
           <FormControl
-            name='timePeriods'
+            name='timePeriod'
             componentClass='select'
             onChange={onSelectValueChange}>
             {_.map(options.timePeriods, (period, index) => {
@@ -115,14 +124,14 @@ export default class Sidebar extends Component {
             })}
           </FormControl>
         </FormGroup>
-        <FormGroup>
-          <ControlLabel>Graph type</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
+        {/*<FormGroup>*/}
+          {/*<ControlLabel>Graph type</ControlLabel>*/}
+          {/*<FormControl componentClass='select'>*/}
+            {/*<option value='option1'>option 1</option>*/}
+            {/*<option value='option2'>option 2</option>*/}
+            {/*<option value='option3'>option 3</option>*/}
+          {/*</FormControl>*/}
+        {/*</FormGroup>*/}
       </div>
     )
   }
