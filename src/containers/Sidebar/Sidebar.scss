@@ -1,13 +1,16 @@
-@import 'base';
+@import "base";
 
 .sidebar {
+  position: static;
+  left: 0;
+  top: $header-height;
+  bottom: 0;
+  width: $sidebar-width;
+
   display: flex;
   flex-flow: column;
 
   padding: $space-m;
-  width: $sidebar-width;
-  max-height: calc(100vh - #{$header-height});
-
   background-color: $color-sidebar-bg;
   overflow: scroll;
 }

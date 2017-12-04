@@ -1,14 +1,25 @@
-@import 'base';
+@import "base";
 
 .component {
-  display: flex;
-  flex-flow: row nowrap;
-
-  width: 100%;
-  height: calc(100% - #{$header-height});
+  // Empty
 }
 
 .content {
-  flex-grow: 4;
   display: flex;
+  flex-flow: row;
+}
+
+.header {
+  border-radius: 0;
+  margin-bottom: 0;
+}
+
+.innerContent {
+  display: flex;
+  flex-flow: column;
+  align-items: center;
+  flex-grow: 4;
+  padding-top: $space-l;
+
+  overflow: scroll;
 }

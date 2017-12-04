@@ -2,7 +2,6 @@ import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import styles from './Application.scss'
-import { Navbar } from 'react-bootstrap'
 
 const initialState = {
   // Empty
@@ -16,18 +15,6 @@ export class Application extends Component {
 
   static defaultProps = {
     // Empty
-  }
-
-  get header () {
-    return (
-      <Navbar className={styles.header}>
-        <Navbar.Header>
-          <Navbar.Brand>
-            <a href='#'>DIGA</a>
-          </Navbar.Brand>
-        </Navbar.Header>
-      </Navbar>
-    )
   }
 
   constructor (props) {
@@ -47,7 +34,6 @@ export class Application extends Component {
   render () {
     return (
       <div className={styles.component}>
-        {this.header}
         {this.props.children}
       </div>
     )
