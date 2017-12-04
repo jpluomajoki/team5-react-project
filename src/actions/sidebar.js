@@ -39,3 +39,50 @@ export function selectRegion (regionId) {
     }
   }
 }
+
+export function selectScenarioCollection (scenarioCollection) {
+  return {
+    type: ActionTypes.SIDEBAR_SELECT_SCENARIO_COLLECTION,
+    payload: {
+      id: scenarioCollection
+    }
+  }
+}
+
+export function fetchScenarios (scenarioCollectionId, regionId) {
+  return {
+    type: ActionTypes.SIDEBAR_FETCH_SCENARIOS,
+    payload: {
+      request: {
+        url: `/scenarioCollection/${scenarioCollectionId}/region/${regionId}`
+      }
+    }
+  }
+}
+
+export function selectScenarios (scenarios) {
+  return {
+    type: ActionTypes.SIDEBAR_SELECT_SCENARIOS,
+    payload: {
+      ids: scenarios
+    }
+  }
+}
+
+export function selectIndicators (indicators) {
+  return {
+    type: ActionTypes.SIDEBAR_SELECT_INDICATORS,
+    payload: {
+      ids: indicators
+    }
+  }
+}
+
+export function selectPeriod (period) {
+  return {
+    type: ActionTypes.SIDEBAR_SELECT_PERIOD,
+    payload: {
+      id: period
+    }
+  }
+}

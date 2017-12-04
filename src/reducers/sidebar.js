@@ -6,7 +6,8 @@ const initialState = {
     availableChoices: {
       regionLevels: [],
       regions: [],
-      placeholder: []
+      placeholder: [],
+      scenarios: []
     },
     selectedChoices: {
       regionLevel: '',
@@ -75,7 +76,8 @@ const selectionsReducer = reduce(initialState, {
       },
       selectedChoices: {
         ...state.data.selectedChoices,
-        region: payload.data[0].id
+        region: payload.data[1].id,
+        scenarioCollection: payload.data[0].scenarioCollections[0].id
       }
     },
     error: null,
@@ -91,6 +93,67 @@ const selectionsReducer = reduce(initialState, {
       selectedChoices: {
         ...state.data.selectedChoices,
         region: payload.id
+      }
+    }
+  }),
+  [ActionTypes.SIDEBAR_SELECT_SCENARIO_COLLECTION]: (state, { payload }) => ({
+    data: {
+      ...state.data,
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        scenarioCollection: payload.id
+      }
+    }
+  }),
+  [ActionTypes.SIDEBAR_SELECT_SCENARIOS]: (state, { payload }) => ({
+    data: {
+      ...state.data,
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        scenarios: payload.ids
+      }
+    }
+  }),
+  [ActionTypes.SIDEBAR_FETCH_SCENARIOS]: () => ({
+    error: null,
+    pending: true
+  }),
+  [ActionTypes.SIDEBAR_FETCH_SCENARIOS + '_SUCCESS']: (state, { payload }) => ({
+    data: {
+      ...state.data,
+      availableChoices: {
+        ...state.data.availableChoices,
+        scenarios: payload.data[0].scenarios,
+        indicatorCategories: payload.data[0].indicatorCategories,
+        timePeriods: payload.data[0].timePeriods
+      },
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        scenarios: payload.data[0].id
+      }
+    },
+    error: null,
+    pending: false
+  }),
+  [ActionTypes.SIDEBAR_FETCH_SCENARIOS + '_ERROR']: (state, { payload }) => ({
+    error: payload.error,
+    pending: false
+  }),
+  [ActionTypes.SIDEBAR_SELECT_INDICATORS]: (state, { payload }) => ({
+    data: {
+      ...state.data,
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        indicators: payload.ids
+      }
+    }
+  }),
+  [ActionTypes.SIDEBAR_SELECT_PERIOD]: (state, { payload }) => ({
+    data: {
+      ...state.data,
+      selectedChoices: {
+        ...state.data.selectedChoices,
+        period: payload.id
       }
     }
   })
