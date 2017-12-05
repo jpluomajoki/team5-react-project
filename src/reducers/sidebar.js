@@ -76,7 +76,7 @@ const selectionsReducer = reduce(initialState, {
       },
       selectedChoices: {
         ...state.data.selectedChoices,
-        region: payload.data[1].id,
+        region: payload.data[0].id,
         scenarioCollection: payload.data[0].scenarioCollections[0].id
       }
     },
