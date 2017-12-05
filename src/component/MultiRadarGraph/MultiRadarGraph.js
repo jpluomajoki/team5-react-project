@@ -3,18 +3,18 @@ import PropTypes from 'prop-types'
 import _ from 'lodash'
 import { scaleOrdinal, schemeCategory10 } from 'd3-scale'
 import {
-  BarChart,
-  Bar,
-  XAxis,
-  YAxis,
-  CartesianGrid,
-  Tooltip,
-  Legend
+  Radar,
+  RadarChart,
+  PolarGrid,
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Legend,
+  Tooltip
 } from 'recharts'
 
 const colors = scaleOrdinal(schemeCategory10).range()
 
-const BarGraph = ({ data, ...props }) => {
+const MultiRadarGraph = ({ data, ...props }) => {
   const differentScenarios = []
   _.forOwn(data[0], (value, key) => { // every data object has the same key so just use the first one
     if (key !== 'id' && key !== 'name' && key !== 'values' && key !== 'scenarios') {
@@ -23,31 +23,31 @@ const BarGraph = ({ data, ...props }) => {
   })
 
   return (
-    <BarChart data={data} {...props} >
-      <XAxis dataKey='name' />
-      <YAxis />
-      <CartesianGrid strokeDasharray='3 3' />
-      <Legend />
-      <Tooltip />
+    <RadarChart data={data} {...props}>
       {_.map(differentScenarios, (scenario, index) => {
         const color = colors[index % 10]
 
         return (
-          <Bar key={index} dataKey={scenario} fill={color} />
+          <Radar key={index} dataKey={scenario} stroke={color} fill={color} fillOpacity={0.2} />
         )
       })}
-    </BarChart>
+      <PolarGrid />
+      <Legend />
+      <Tooltip />
+      <PolarAngleAxis dataKey='name' />
+      <PolarRadiusAxis angle={45} />
+    </RadarChart>
   )
 }
 
-BarGraph.propTypes = {
+MultiRadarGraph.propTypes = {
   data: PropTypes.array.isRequired
 }
 
-BarGraph.defaultProps = {
+MultiRadarGraph.defaultProps = {
   outerRadius: 150,
   width: 500,
   height: 500
 }
 
-export default BarGraph
+export default MultiRadarGraph

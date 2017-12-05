@@ -2,31 +2,13 @@
 
 .component {
   // Empty
+  height: 100%;
 }
 
 .content {
   display: flex;
   flex-flow: row;
-}
-
-.header {
-  border-radius: 0;
-  margin-bottom: 0;
-}
-
-.sidebar {
-  position: static;
-  left: 0;
-  top: $header-height;
-  bottom: 0;
-  width: $sidebar-width;
-
-  display: flex;
-  flex-flow: column;
-
-  padding: $space-m;
-  background-color: $color-sidebar-bg;
-  overflow: scroll;
+  height: 100%;
 }
 
 .innerContent {
