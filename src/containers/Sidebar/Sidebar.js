@@ -123,7 +123,6 @@ class Sidebar extends Component {
           </FormControl>
         </FormGroup>
 
-        {/* TODO: Fix this part, it doesnt show the categories */}
         <FormGroup>
           <ControlLabel>Indicators</ControlLabel>
           <FormControl
@@ -133,11 +132,17 @@ class Sidebar extends Component {
             inputRef={ref => { this._indicatorsInput = ref }}
             onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}>
             {_.map(indicatorCategories, indicatorCategory => {
-              return (_.map(indicatorCategory.indicators, indicator => {
-                return (
-                  <option value={indicator.id} key={indicator.id}>{indicator.name}</option>
-                )
-              }))
+              return [
+                <option
+                  disabled
+                  key={indicatorCategory.id}>
+                  ----{indicatorCategory.name}----
+                </option>,
+                _.map(indicatorCategory.indicators, indicator => {
+                  return (
+                    <option value={indicator.id} key={indicator.id}>{indicator.name}</option>
+                  )
+                })]
             })}
           </FormControl>
         </FormGroup>
