@@ -1,66 +1,93 @@
-import _ from'lodash'
+import _ from 'lodash'
 
-export const getIndicatorValuesPerScenarioForEachScenario = (data, scenarioIds, indicatorIds, timePeriodId) => {
+export const formatDataSeparatedGraphs = ({ data, scenarioIds, indicatorsIds, timePeriodId }) => {
   const scenarios = _.filter(data.scenarios, scenario => scenarioIds.indexOf(String(scenario.id)) !== -1)
   let indicators = []
 
   _.forEach(data.indicatorCategories, category => {
-    indicators = _.concat(indicators, category.indicators)
+    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id))))
   })
 
-  _.forEach(data.values, value => {
-    const belongsToScenarios = scenarioIds.indexOf(String(value.scenarioId)) !== -1
-    const belongsToTimePeriod = timePeriodId === String(value.timePeriodId)
+  _.forEach(scenarios, scenario => {
+    scenario.indicators = []
 
-    if (belongsToScenarios && belongsToTimePeriod) {
-      const scenario = _.find(scenarios, scenario => scenario.id === value.scenarioId)
-      const indicator = _.find(indicators, indicator => indicator.id === value.indicatorId)
+    _.forEach(indicators, indicator => {
+      const belongingValues = _.filter(data.values, value => {
+        if (timePeriodId !== String(value.timePeriodId)) { // value doesn't belong to time period
+          return false
+        }
 
-      if (!scenario.indicators) {
-        scenario.indicators = []
-      }
+        if (scenario.id !== value.scenarioId) { // value doesn't belong to scenario
+          return false
+        }
 
-      if (!_.find(scenario.indicators, i => i.id === indicator.id)) {
-        indicator.value = value.value
-        scenario.indicators.push(indicator)
-      } else {
-        indicator.value = indicator.value + value.value
-      }
-    }
+        if (indicator.id !== value.indicatorId) { // value doesn't belong to one of the indicator
+          return false
+        }
+
+        return true
+      })
+
+      let totalValue = 0
+      _.forEach(belongingValues, v => {
+        totalValue += v.value
+      })
+
+      scenario.indicators.push({
+        id: indicator.id,
+        name: indicator.name,
+        values: belongingValues,
+        value: totalValue
+      })
+    })
   })
 
   return scenarios
 }
 
-export const getIndicatorScenarioValuesPerIndicator = (data, scenarioIds, indicatorIds, timePeriodId) => {
+export const formatDataCombinedGraph = ({ data, scenarioIds, indicatorsIds, timePeriodId }) => {
   const scenarios = _.filter(data.scenarios, scenario => scenarioIds.indexOf(String(scenario.id)) !== -1)
-  const indicatorCategories = _.filter(data.indicatorCategories, indicatorCategory=> indicatorIds.indexOf(indicatorCategory) !== -1)
   let indicators = []
 
-  _.forEach(indicatorCategories, category => {
-    indicators = _.concat(indicators, _.map(category.indicators, indicator => ({
-      id: indicator.id,
-      name: indicator.name
-    })))
+  _.forEach(data.indicatorCategories, category => {
+    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id))))
   })
+
+  indicators = _.map(indicators, indicator => ({
+    id: indicator.id,
+    name: indicator.name,
+    scenarios: []
+  }))
 
   _.forEach(indicators, indicator => {
     _.forEach(scenarios, scenario => {
-      scenario.value = 0
-
-      _.forEach(data.values, value => {
-        const belongsToIndicator = indicator.id === value.indicatorId
-        const belongsToScenario = scenario.id === value.scenarioId
-        const belongsToTimePeriod = timePeriodId === String(value.timePeriodId)
-
-        if (belongsToIndicator && belongsToScenario && belongsToTimePeriod) {
-          scenario.value += value.value
+      const belongingValues = _.filter(data.values, value => {
+        if (timePeriodId !== String(value.timePeriodId)) { // value doesn't belong to time period
+          return false
         }
+
+        if (scenario.id !== value.scenarioId) { // value doesn't belong to scenario
+          return false
+        }
+
+        if (indicator.id !== value.indicatorId) { // value doesn't belong to one of the indicator
+          return false
+        }
+
+        return true
       })
 
-      if (!indicator[`${scenario.name}`]) {
-        indicator[`${scenario.name}`] = scenario.value
-      }
+      let totalValue = 0
+      _.forEach(belongingValues, v => {
+        totalValue += v.value
+      })
+
+      indicator.values = belongingValues // <-- used for development (just to check things)
+      indicator[`${scenario.name}`] = totalValue // <-- used for bar and radar graphs
+      indicator.scenarios.push({ // <-- used for table
+        name: scenario.name,
+        value: totalValue
+      })
     })
   })
 

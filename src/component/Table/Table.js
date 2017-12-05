@@ -1,41 +1,42 @@
 import React from 'react'
 import PropTypes from 'prop-types'
+import _ from 'lodash'
 import styles from './Table.scss'
 import { Table } from 'react-bootstrap'
 
-const TableElement = ({ }) => (
-  <div className={styles.component}>
-    <Table>
-      <thead>
-        <tr>
-          <th>#</th>
-          <th>First Name</th>
-          <th>Last Name</th>
-          <th>Username</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>1</td>
-          <td>Mark</td>
-          <td>Otto</td>
-          <td>@mdo</td>
-        </tr>
-        <tr>
-          <td>2</td>
-          <td>Jacob</td>
-          <td>Thornton</td>
-          <td>@fat</td>
-        </tr>
-        <tr>
-          <td>3</td>
-          <td colSpan='2'>Larry the Bird</td>
-          <td>@twitter</td>
-        </tr>
-      </tbody>
-    </Table>
-  </div>
-)
+const TableElement = ({ data }) => {
+  const differentScenarios = []
+  _.forOwn(data[0], (value, key) => { // every data object has the same key so just use the first one
+    if (key !== 'id' && key !== 'name' && key !== 'values' && key !== 'scenarios') {
+      differentScenarios.push(key)
+    }
+  })
+
+  return (
+    <div className={styles.component}>
+      <Table>
+        <thead>
+          <tr>
+            <th>Indicator</th>
+            {_.map(differentScenarios, (scenario, index) => (
+              <th key={index}>{scenario}</th>
+            ))}
+          </tr>
+        </thead>
+        <tbody>
+          {_.map(data, (indicator, index) => (
+            <tr key={index}>
+              <td>{indicator.name}</td>
+              {_.map(indicator.scenarios, (scenario, index) => (
+                <td key={index}>{scenario.value}</td>
+              ))}
+            </tr>
+          ))}
+        </tbody>
+      </Table>
+    </div>
+  )
+}
 
 TableElement.propTypes = {
   data: PropTypes.array.isRequired

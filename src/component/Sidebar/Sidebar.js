@@ -19,7 +19,7 @@ export default class Sidebar extends Component {
   }
 
   _scenariosInput = null
-  _indicatorCategoriesInput = null
+  _indicatorsInput = null
 
   // Note: In order to get all the values from a multiple select when the value changes
   // we need to handle this a bit differently.
@@ -96,17 +96,19 @@ export default class Sidebar extends Component {
           <ControlLabel>Indicators</ControlLabel>
           <FormControl
             multiple
-            name='indicatorCategories'
+            name='indicators'
             componentClass='select'
-            inputRef={ref => this._indicatorCategoriesInput = ref}
-            onChange={this.handleMultipleSelectValueChange('_indicatorCategoriesInput')}>
-            {_.map(options.indicatorCategories, (category, index) => {
-              return (
-                <option key={index} value={category.id}>
-                  {category.name}
-                </option>
-              )
-            })}
+            inputRef={ref => this._indicatorsInput = ref}
+            onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}>
+            {_.map(options.indicatorCategories, (category, index) =>
+              _.map(category.indicators, (indicator, index) => {
+                return (
+                  <option key={index} value={indicator.id}>
+                    {indicator.name}
+                  </option>
+                )
+              })
+            )}
           </FormControl>
         </FormGroup>
         <FormGroup>
@@ -124,14 +126,6 @@ export default class Sidebar extends Component {
             })}
           </FormControl>
         </FormGroup>
-        {/*<FormGroup>*/}
-          {/*<ControlLabel>Graph type</ControlLabel>*/}
-          {/*<FormControl componentClass='select'>*/}
-            {/*<option value='option1'>option 1</option>*/}
-            {/*<option value='option2'>option 2</option>*/}
-            {/*<option value='option3'>option 3</option>*/}
-          {/*</FormControl>*/}
-        {/*</FormGroup>*/}
       </div>
     )
   }

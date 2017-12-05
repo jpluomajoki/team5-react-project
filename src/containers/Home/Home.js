@@ -16,18 +16,19 @@ import BarGraph from 'component/BarGraph'
 import Table from 'component/Table'
 
 const initialState = {
-  graphOption: MenuOptions.POLAR_GRAPH,
+  graphOption: MenuOptions.RADAR_GRAPH,
 
   selectedValues: {
     regionLevel: '',
     region: '',
     scenarioCollection: '',
-    scenarios: [],
-    indicatorCategories: [],
-    timePeriod: ''
-  },
-
-  data: null
+    // scenarios: [],
+    // indicators: [],
+    // timePeriod: ''
+    scenarios: ['10', '11', '12'],
+    indicators: ['120', '122', '123'],
+    timePeriod: '21'
+  }
 }
 
 export class Home extends Component {
@@ -51,23 +52,6 @@ export class Home extends Component {
     console.log('Download')
   }
 
-  // // Format data when required fields are chosen
-  // postOnSidebarValueChange = () => {
-  //   const { selectedValues } = this.state
-  //   const { scenarios, indicatorCategories, timePeriod } = selectedValues
-  //
-  //   // Tmp 'validation'
-  //   if (scenarios.length === 0
-  //     || indicatorCategories.length === 0
-  //     || timePeriod === '') {
-  //     return
-  //   }
-  //
-  //   this.setState({
-  //     data: DataUtils.getIndicatorValuesPerScenarioForEachScenario(DUMMY_DATA[0], scenarios, indicatorCategories, timePeriod)
-  //   })
-  // }
-
   // Note: in order to use this event handler
   // the target needs to have a name and value!
   handleSidebarValueChange = (event) => {
@@ -75,11 +59,9 @@ export class Home extends Component {
 
     selectedValues[event.target.name] = event.target.value
 
-    this.setState({ selectedValues })
-
-    // this.setState({
-    //   selectedValues
-    // }, this.postOnSidebarValueChange)
+    this.setState({ selectedValues }, () => {
+      console.log(this.state.selectedValues)
+    })
   }
 
   get header () {
@@ -101,27 +83,31 @@ export class Home extends Component {
 
   get innerContent () {
     const { selectedValues } = this.state
-    const { scenarios, indicatorCategories, timePeriod } = selectedValues
-
+    const { scenarios, indicators, timePeriod } = selectedValues
 
     // Tmp 'validation'
-    if (scenarios.length === 0
-      || indicatorCategories.length === 0
-      || timePeriod === '') {
-      return
+    if (scenarios.length === 0 ||
+      indicators.length === 0 ||
+      timePeriod === '') {
+      return null
     }
 
-    // return (
-    //   <div className={styles.innerContent}>
-    //     <RadarGraph data={this.state.data[0]} />
-    //   </div>
-    // )
+    let element = null
+    let data = DataUtils.formatDataCombinedGraph({
+      data: DUMMY_DATA[0],
+      indicatorsIds: indicators,
+      scenarioIds: scenarios,
+      timePeriodId: timePeriod
+    })
 
-    let element
-    let data
     switch (this.state.graphOption) {
-      case MenuOptions.MULTI_GRAPHS: {
-        data = DataUtils.getIndicatorValuesPerScenarioForEachScenario(DUMMY_DATA[0], scenarios, indicatorCategories, timePeriod)
+      case MenuOptions.SEPARATED_GRAPHS: {
+        data = DataUtils.formatDataSeparatedGraphs({
+          data: DUMMY_DATA[0],
+          indicatorsIds: indicators,
+          scenarioIds: scenarios,
+          timePeriodId: timePeriod
+        })
         element = _.map(data, (data, index) => {
           return (
             <RadarGraph key={index} data={data} />
@@ -129,21 +115,17 @@ export class Home extends Component {
         })
         break
       }
-      case MenuOptions.POLAR_GRAPH: {
-        data = DataUtils.getIndicatorScenarioValuesPerIndicator(DUMMY_DATA[0], scenarios, indicatorCategories, timePeriod)
+      case MenuOptions.RADAR_GRAPH: {
         element = <MultiRadarGraph data={data} />
         break
       }
-      // case MenuOptions.BAR_GRAPH: {
-      //   element = <BarGraph data={barData} />
-      //   break
-      // }
-      // case MenuOptions.TABLE: {
-      //   element = <Table data={tableData} />
-      //   break
-      // }
-      default: {
-        element = null
+      case MenuOptions.BAR_GRAPH: {
+        element = <BarGraph data={data} />
+        break
+      }
+      case MenuOptions.TABLE: {
+        element = <Table data={data} />
+        break
       }
     }
 

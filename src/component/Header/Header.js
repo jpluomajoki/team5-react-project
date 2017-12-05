@@ -17,10 +17,10 @@ const Header = ({
 }) => (
   <Navbar className={styles.component}>
     <Nav pullRight>
-      <NavDropdown title='Menu'>
-        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.MULTI_GRAPHS)}>Multi graphs</MenuItem>
-        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.POLAR_GRAPH)}>Polar graphs</MenuItem>
-        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.BAR_GRAPH)}>Bar graphs</MenuItem>
+      <NavDropdown title='Menu' id='menu-dropdown'>
+        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.SEPARATED_GRAPHS)}>Separated graphs</MenuItem>
+        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.RADAR_GRAPH)}>Radar graph</MenuItem>
+        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.BAR_GRAPH)}>Bar graph</MenuItem>
         <MenuItem onClick={onMenuItemClickHandler(MenuOptions.TABLE)}>Table</MenuItem>
         <MenuItem divider />
         <MenuItem onClick={onPrintClickHandler}>Print</MenuItem>
