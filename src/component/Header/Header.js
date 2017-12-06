@@ -10,11 +10,7 @@ import {
 
 import * as MenuOptions from 'constants/MenuOptions'
 
-const Header = ({
-  onMenuItemClickHandler,
-  onPrintClickHandler,
-  onDownloadClickHandler
-}) => (
+const Header = ({ onMenuItemClickHandler, onPrintClickHandler }) => (
   <Navbar className={styles.component}>
     <Nav pullRight>
       <NavDropdown title='Menu' id='menu-dropdown'>
@@ -24,7 +20,6 @@ const Header = ({
         <MenuItem onClick={onMenuItemClickHandler(MenuOptions.TABLE)}>Table</MenuItem>
         <MenuItem divider />
         <MenuItem onClick={onPrintClickHandler}>Print</MenuItem>
-        <MenuItem onClick={onDownloadClickHandler}>Download</MenuItem>
       </NavDropdown>
     </Nav>
   </Navbar>
@@ -32,8 +27,7 @@ const Header = ({
 
 Header.propTypes = {
   onMenuItemClickHandler: PropTypes.func.isRequired,
-  onPrintClickHandler: PropTypes.func.isRequired,
-  onDownloadClickHandler: PropTypes.func.isRequired
+  onPrintClickHandler: PropTypes.func.isRequired
 }
 
 Header.defaultProps = {
