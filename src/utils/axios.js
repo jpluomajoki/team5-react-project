@@ -7,11 +7,3 @@ export const client = axios.create({
   baseURL: config.API_URL,
   withCredentials: false
 })
-
-export const setTokenHeader = value => {
-  client.defaults.headers.token = value
-}
-
-export const clearTokenHeader = () => {
-  client.defaults.headers.token = null
-}
