@@ -1,0 +1,6 @@
+export const REGION_LEVEL = 'regionLevel'
+export const REGION = 'region'
+export const SCENARIO_COLLECTION = 'scenarioCollection'
+export const SCENARIOS = 'scenarios'
+export const INDICATORS = 'indicators'
+export const TIME_PERIOD = 'timePeriod'

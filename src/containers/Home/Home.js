@@ -6,8 +6,12 @@ import styles from './Home.scss'
 
 import * as DataUtils from 'utils/data'
 import * as MenuOptions from 'constants/MenuOptions'
-import { DUMMY_DATA } from 'constants/Constants'
-
+import * as FormControlNames from 'constants/FormControls'
+import {
+  fetchRegionLevels,
+  fetchRegions,
+  fetchScenarioCollectionData
+} from 'actions/data'
 import Header from 'component/Header'
 import Sidebar from 'component/Sidebar'
 import MultiRadarGraph from 'component/MultiRadarGraph'
@@ -17,23 +21,30 @@ import Table from 'component/Table'
 
 const initialState = {
   graphOption: MenuOptions.RADAR_GRAPH,
-
   selectedValues: {
-    regionLevel: '',
-    region: '',
-    scenarioCollection: '',
-    scenarios: [],
-    indicators: [],
-    timePeriod: ''
-    // scenarios: ['10', '11', '12'],
-    // indicators: ['120', '122', '123'],
-    // timePeriod: '21'
+    [FormControlNames.REGION_LEVEL]: '',
+    [FormControlNames.REGION]: '',
+    [FormControlNames.SCENARIO_COLLECTION]: '',
+    [FormControlNames.SCENARIOS]: [],
+    [FormControlNames.INDICATORS]: [],
+    [FormControlNames.TIME_PERIOD]: ''
   }
 }
 
 export class Home extends Component {
   static propTypes = {
-    // Empty
+    regionLevels: PropTypes.array.isRequired,
+    regions: PropTypes.array.isRequired,
+    scenarios: PropTypes.array.isRequired,
+    indicatorCategories: PropTypes.array.isRequired,
+    timePeriods: PropTypes.array.isRequired,
+    data: PropTypes.object.isRequired,
+    error: PropTypes.object,
+    pending: PropTypes.bool.isRequired,
+
+    fetchRegionLevels: PropTypes.func.isRequired,
+    fetchRegions: PropTypes.func.isRequired,
+    fetchScenarioCollectionData: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -48,16 +59,49 @@ export class Home extends Component {
     window.print()
   }
 
+  // Post sidebar value change
+  // Depending on the target a next action might be acquired
+  // 1. REGION_LEVEL value change         -> fetch regions
+  // 2. SCENARIO_COLLECTION value change  -> fetch scenario collection data
+  postSidebarValueChange = (targetName) => {
+    const { selectedValues } = this.state
+
+    switch (targetName) {
+      case FormControlNames.REGION_LEVEL: {
+        const regionLevelId = selectedValues[FormControlNames.REGION_LEVEL]
+        this.props.fetchRegions(regionLevelId)
+        break
+      }
+      case FormControlNames.SCENARIO_COLLECTION: {
+        const regionId = selectedValues[FormControlNames.REGION]
+        const collectionId = selectedValues[FormControlNames.SCENARIO_COLLECTION]
+        this.props.fetchScenarioCollectionData(collectionId, regionId)
+      }
+    }
+  }
+
   // Note: in order to use this event handler
   // the target needs to have a name and value!
   handleSidebarValueChange = (event) => {
+    let { selectedValues } = this.state
+    const targetName = event.target.name
+    const targetValue = event.target.value
+
+    selectedValues[targetName] = targetValue
+
+    this.setState({ selectedValues }, this.postSidebarValueChange(targetName))
+  }
+
+  isValid = () => {
     const { selectedValues } = this.state
 
-    selectedValues[event.target.name] = event.target.value
+    if (selectedValues.scenarios.length === 0 ||
+      selectedValues.indicators.length === 0 ||
+      selectedValues.timePeriod === '') {
+      return false
+    }
 
-    this.setState({ selectedValues }, () => {
-      console.log(this.state.selectedValues)
-    })
+    return true
   }
 
   get header () {
@@ -71,63 +115,59 @@ export class Home extends Component {
   get sidebar () {
     return (
       <Sidebar
-        options={DUMMY_DATA[0]}
+        {...this.props}
+        selectedValues={this.state.selectedValues}
         onSelectValueChange={this.handleSidebarValueChange} />
     )
   }
 
+  // Returns graph element(s) depending on the chosen menu option
+  // data is being formatted on the go
   get innerContent () {
-    const { selectedValues } = this.state
+    const { selectedValues, graphOption } = this.state
     const { scenarios, indicators, timePeriod } = selectedValues
 
-    // Tmp 'validation'
-    if (scenarios.length === 0 ||
-      indicators.length === 0 ||
-      timePeriod === '') {
+    if (!this.isValid()) {
       return null
     }
 
-    let element = null
-    let data = DataUtils.formatDataCombinedGraph({
-      data: DUMMY_DATA[0],
+    let data
+    if (graphOption === MenuOptions.SEPARATED_GRAPHS) {
+      data = DataUtils.formatDataSeparatedGraphs({
+        data: this.props.data,
+        indicatorsIds: indicators,
+        scenarioIds: scenarios,
+        timePeriodId: timePeriod
+      })
+
+      return _.map(data, (data, index) => {
+        return (
+          <RadarGraph key={index} data={data} />
+        )
+      })
+    }
+
+    data = DataUtils.formatDataCombinedGraph({
+      data: this.props.data,
       indicatorsIds: indicators,
       scenarioIds: scenarios,
       timePeriodId: timePeriod
     })
 
-    switch (this.state.graphOption) {
-      case MenuOptions.SEPARATED_GRAPHS: {
-        data = DataUtils.formatDataSeparatedGraphs({
-          data: DUMMY_DATA[0],
-          indicatorsIds: indicators,
-          scenarioIds: scenarios,
-          timePeriodId: timePeriod
-        })
-        element = _.map(data, (data, index) => {
-          return (
-            <RadarGraph key={index} data={data} />
-          )
-        })
-        break
-      }
-      case MenuOptions.RADAR_GRAPH: {
-        element = <MultiRadarGraph data={data} />
-        break
-      }
-      case MenuOptions.BAR_GRAPH: {
-        element = <BarGraph data={data} />
-        break
-      }
-      case MenuOptions.TABLE: {
-        element = <Table data={data} />
-        break
-      }
+    if (graphOption === MenuOptions.RADAR_GRAPH) {
+      return (
+        <MultiRadarGraph data={data} />
+      )
+    }
+
+    if (graphOption === MenuOptions.BAR_GRAPH) {
+      return (
+        <BarGraph data={data} />
+      )
     }
 
     return (
-      <div id='section-to-print' className={styles.innerContent}>
-        {element}
-      </div>
+      <Table data={data} />
     )
   }
 
@@ -138,7 +178,7 @@ export class Home extends Component {
   }
 
   componentWillMount () {
-    // Empty
+    this.props.fetchRegionLevels()
   }
 
   componentWillReceiveProps (nextProps) {
@@ -151,7 +191,9 @@ export class Home extends Component {
         {this.header}
         <div className={styles.content}>
           {this.sidebar}
-          {this.innerContent}
+          <div id='section-to-print' className={styles.innerContent}>
+            {this.innerContent}
+          </div>
         </div>
       </div>
     )
@@ -159,11 +201,20 @@ export class Home extends Component {
 }
 
 const mapStateToProps = (state) => ({
-
+  regionLevels: state.data.regionLevels,
+  regions: state.data.regions,
+  scenarios: state.data.scenarios,
+  indicatorCategories: state.data.indicatorCategories,
+  timePeriods: state.data.timePeriods,
+  data: state.data.data,
+  error: state.data.error,
+  pending: state.data.pending
 })
 
 const mapActionsToProps = {
-
+  fetchRegionLevels,
+  fetchRegions,
+  fetchScenarioCollectionData
 }
 
 export default connect(

@@ -7,10 +7,16 @@ import {
   ControlLabel,
   FormControl
 } from 'react-bootstrap'
+import * as FormControlNames from 'constants/FormControls'
 
 export default class Sidebar extends Component {
   static propTypes = {
-    options: PropTypes.object.isRequired,
+    regionLevels: PropTypes.array.isRequired,
+    regions: PropTypes.array.isRequired,
+    scenarios: PropTypes.array.isRequired,
+    indicatorCategories: PropTypes.array.isRequired,
+    timePeriods: PropTypes.array.isRequired,
+    selectedValues: PropTypes.object.isRequired,
     onSelectValueChange: PropTypes.func.isRequired
   }
 
@@ -37,42 +43,75 @@ export default class Sidebar extends Component {
     this.props.onSelectValueChange(fakeEvent)
   }
 
+  // Get scenario collections from chosen region
+  get scenarioCollections () {
+    if (!this.props.regions || !this.props.selectedValues[FormControlNames.REGION]) {
+      return null
+    }
+
+    const chosenRegion = _.find(this.props.regions, r => String(r.id) === this.props.selectedValues[FormControlNames.REGION])
+
+    return chosenRegion ? chosenRegion.scenarioCollections : null
+  }
+
   render () {
-    const { options, onSelectValueChange } = this.props
+    const {
+      regionLevels,
+      regions,
+      scenarios,
+      indicatorCategories,
+      timePeriods,
+      onSelectValueChange
+    } = this.props
 
     return (
       <div className={styles.component}>
         <FormGroup>
           <ControlLabel>Region level</ControlLabel>
           <FormControl
-            name='regionLevel'
+            name={FormControlNames.REGION_LEVEL}
             componentClass='select'
             onChange={onSelectValueChange}>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
+            <option disabled selected>select</option>
+            {_.map(regionLevels, (level, index) => {
+              return (
+                <option key={index} value={level.id}>
+                  {level.name}
+                </option>
+              )
+            })}
           </FormControl>
         </FormGroup>
         <FormGroup>
           <ControlLabel>Region</ControlLabel>
           <FormControl
-            name='region'
+            name={FormControlNames.REGION}
             componentClass='select'
             onChange={onSelectValueChange}>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
+            <option disabled selected>select</option>
+            {_.map(regions, (region, index) => {
+              return (
+                <option key={index} value={region.id}>
+                  {region.name}
+                </option>
+              )
+            })}
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Scenario collection</ControlLabel>
+          <ControlLabel>Scenario Collection</ControlLabel>
           <FormControl
-            name='scenarioCollection'
+            name={FormControlNames.SCENARIO_COLLECTION}
             componentClass='select'
             onChange={onSelectValueChange}>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
+            <option disabled selected>select</option>
+            {_.map(this.scenarioCollections, (collection, index) => {
+              return (
+                <option key={index} value={collection.id}>
+                  {collection.name}
+                </option>
+              )
+            })}
           </FormControl>
         </FormGroup>
         <FormGroup>
@@ -83,7 +122,8 @@ export default class Sidebar extends Component {
             componentClass='select'
             inputRef={ref => this._scenariosInput = ref}
             onChange={this.handleMultipleSelectValueChange('_scenariosInput')}>
-            {_.map(options.scenarios, (scenario, index) => {
+            <option disabled selected>select</option>
+            {_.map(scenarios, (scenario, index) => {
               return (
                 <option key={index} value={scenario.id}>
                   {scenario.name}
@@ -96,11 +136,12 @@ export default class Sidebar extends Component {
           <ControlLabel>Indicators</ControlLabel>
           <FormControl
             multiple
-            name='indicators'
+            name={FormControlNames.INDICATORS}
             componentClass='select'
             inputRef={ref => this._indicatorsInput = ref}
             onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}>
-            {_.map(options.indicatorCategories, (category, index) =>
+            <option disabled selected>select</option>
+            {_.map(indicatorCategories, (category, index) =>
               _.map(category.indicators, (indicator, index) => {
                 return (
                   <option key={index} value={indicator.id}>
@@ -114,10 +155,11 @@ export default class Sidebar extends Component {
         <FormGroup>
           <ControlLabel>Time period</ControlLabel>
           <FormControl
-            name='timePeriod'
+            name={FormControlNames.TIME_PERIOD}
             componentClass='select'
             onChange={onSelectValueChange}>
-            {_.map(options.timePeriods, (period, index) => {
+            <option disabled selected>select</option>
+            {_.map(timePeriods, (period, index) => {
               return (
                 <option key={index} value={period.id}>
                   {`${period.yearStart}-${period.yearEnd}`}
