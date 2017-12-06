@@ -22,12 +22,12 @@ const initialState = {
     regionLevel: '',
     region: '',
     scenarioCollection: '',
-    // scenarios: [],
-    // indicators: [],
-    // timePeriod: ''
-    scenarios: ['10', '11', '12'],
-    indicators: ['120', '122', '123'],
-    timePeriod: '21'
+    scenarios: [],
+    indicators: [],
+    timePeriod: ''
+    // scenarios: ['10', '11', '12'],
+    // indicators: ['120', '122', '123'],
+    // timePeriod: '21'
   }
 }
 
@@ -45,11 +45,7 @@ export class Home extends Component {
   }
 
   handlePrintClick = () => {
-    console.log('print')
-  }
-
-  handleDownloadClick = () => {
-    console.log('Download')
+    window.print()
   }
 
   // Note: in order to use this event handler
@@ -68,8 +64,7 @@ export class Home extends Component {
     return (
       <Header
         onMenuItemClickHandler={this.handleMenuGraphOptionClick}
-        onPrintClickHandler={this.handlePrintClick}
-        onDownloadClickHandler={this.handleDownloadClick} />
+        onPrintClickHandler={this.handlePrintClick} />
     )
   }
 
@@ -130,7 +125,7 @@ export class Home extends Component {
     }
 
     return (
-      <div className={styles.innerContent}>
+      <div id='section-to-print' className={styles.innerContent}>
         {element}
       </div>
     )
