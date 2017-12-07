@@ -5,7 +5,7 @@ export const formatDataSeparatedGraphs = ({ data, scenarioIds, indicatorsIds, ti
   let indicators = []
 
   _.forEach(data.indicatorCategories, category => {
-    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id))))
+    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id)) !== -1))
   })
 
   _.forEach(scenarios, scenario => {
@@ -50,7 +50,7 @@ export const formatDataCombinedGraph = ({ data, scenarioIds, indicatorsIds, time
   let indicators = []
 
   _.forEach(data.indicatorCategories, category => {
-    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id))))
+    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id)) !== -1))
   })
 
   indicators = _.map(indicators, indicator => ({
