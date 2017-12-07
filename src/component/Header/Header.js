@@ -10,24 +10,30 @@ import {
 
 import * as MenuOptions from 'constants/MenuOptions'
 
-const Header = ({ onMenuItemClickHandler, onPrintClickHandler }) => (
+const Header = ({ onLanguageItemClickHandler, onMenuGraphItemClickHandler, onPrintClickHandler, translate }) => (
   <Navbar className={styles.component}>
     <Nav pullRight>
-      <NavDropdown title='Menu' id='menu-dropdown'>
-        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.SEPARATED_GRAPHS)}>Separated graphs</MenuItem>
-        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.RADAR_GRAPH)}>Radar graph</MenuItem>
-        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.BAR_GRAPH)}>Bar graph</MenuItem>
-        <MenuItem onClick={onMenuItemClickHandler(MenuOptions.TABLE)}>Table</MenuItem>
+      <NavDropdown title={translate('language')} id='language-dropdown'>
+        <MenuItem onClick={onLanguageItemClickHandler(MenuOptions.ENGLISH)}>English</MenuItem>
+        <MenuItem onClick={onLanguageItemClickHandler(MenuOptions.FINNISH)}>Suomi</MenuItem>
+      </NavDropdown>
+      <NavDropdown title={translate('menu')} id='menu-dropdown'>
+        <MenuItem onClick={onMenuGraphItemClickHandler(MenuOptions.SEPARATED_GRAPHS)}>{translate('separated graphs')}</MenuItem>
+        <MenuItem onClick={onMenuGraphItemClickHandler(MenuOptions.RADAR_GRAPH)}>{translate('radar graph')}</MenuItem>
+        <MenuItem onClick={onMenuGraphItemClickHandler(MenuOptions.BAR_GRAPH)}>{translate('bar graph')}</MenuItem>
+        <MenuItem onClick={onMenuGraphItemClickHandler(MenuOptions.TABLE)}>{translate('table')}</MenuItem>
         <MenuItem divider />
-        <MenuItem onClick={onPrintClickHandler}>Print</MenuItem>
+        <MenuItem onClick={onPrintClickHandler}>{translate('print')}</MenuItem>
       </NavDropdown>
     </Nav>
   </Navbar>
 )
 
 Header.propTypes = {
-  onMenuItemClickHandler: PropTypes.func.isRequired,
-  onPrintClickHandler: PropTypes.func.isRequired
+  onLanguageItemClickHandler: PropTypes.func.isRequired,
+  onMenuGraphItemClickHandler: PropTypes.func.isRequired,
+  onPrintClickHandler: PropTypes.func.isRequired,
+  translate: PropTypes.func.isRequired
 }
 
 Header.defaultProps = {

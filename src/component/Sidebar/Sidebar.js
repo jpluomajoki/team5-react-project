@@ -17,7 +17,8 @@ export default class Sidebar extends Component {
     indicatorCategories: PropTypes.array.isRequired,
     timePeriods: PropTypes.array.isRequired,
     selectedValues: PropTypes.object.isRequired,
-    onSelectValueChange: PropTypes.func.isRequired
+    onSelectValueChange: PropTypes.func.isRequired,
+    translate: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -55,6 +56,7 @@ export default class Sidebar extends Component {
   }
 
   render () {
+    const translate = this.props.translate
     const {
       regionLevels,
       regions,
@@ -67,7 +69,7 @@ export default class Sidebar extends Component {
     return (
       <div className={styles.component}>
         <FormGroup>
-          <ControlLabel>Region level</ControlLabel>
+          <ControlLabel>{translate('region level')}</ControlLabel>
           <FormControl
             name={FormControlNames.REGION_LEVEL}
             componentClass='select'
@@ -83,7 +85,7 @@ export default class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Region</ControlLabel>
+          <ControlLabel>{translate('region')}</ControlLabel>
           <FormControl
             name={FormControlNames.REGION}
             componentClass='select'
@@ -99,7 +101,7 @@ export default class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Scenario Collection</ControlLabel>
+          <ControlLabel>{translate('scenario collection')}</ControlLabel>
           <FormControl
             name={FormControlNames.SCENARIO_COLLECTION}
             componentClass='select'
@@ -115,7 +117,7 @@ export default class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Scenario</ControlLabel>
+          <ControlLabel>{translate('scenario')}</ControlLabel>
           <FormControl
             multiple
             name='scenarios'
@@ -133,7 +135,7 @@ export default class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Indicators</ControlLabel>
+          <ControlLabel>{translate('indicators')}</ControlLabel>
           <FormControl
             multiple
             name={FormControlNames.INDICATORS}
@@ -153,7 +155,7 @@ export default class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>Time period</ControlLabel>
+          <ControlLabel>{translate('time period')}</ControlLabel>
           <FormControl
             name={FormControlNames.TIME_PERIOD}
             componentClass='select'

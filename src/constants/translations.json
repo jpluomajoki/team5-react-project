@@ -1,0 +1,54 @@
+{
+  "region level": [
+    "Aluetaso",
+    "Region level"
+  ],
+  "region": [
+    "Alue",
+    "Region"
+  ],
+  "scenario collection": [
+    "Skenaariokokoelma",
+    "Scenario collection"
+  ],
+  "scenario": [
+    "Skenaario",
+    "Scenario"
+  ],
+  "indicators": [
+    "Indikaattorit",
+    "Indicators"
+  ],
+  "time period": [
+    "Ajankohta",
+    "Time period"
+  ],
+  "menu": [
+    "Valikko",
+    "Menu"
+  ],
+  "separated graphs": [
+    "Erilliset kaaviot",
+    "Separated graphs"
+  ],
+  "radar graph": [
+    "Tutka-kaavio",
+    "Radar graph"
+  ],
+  "bar graph": [
+    "Pylväskaavio",
+    "Bar graph"
+  ],
+  "table": [
+    "Taulukko",
+    "Table"
+  ],
+  "print": [
+    "Tulosta",
+    "Print"
+  ],
+  "language": [
+    "Kieli",
+    "Language"
+  ]
+}

@@ -3,8 +3,10 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import styles from './Home.scss'
+import { getTranslate, setActiveLanguage } from 'react-localize-redux'
 
 import * as DataUtils from 'utils/data'
+import { setLanguageHeader } from 'utils/axios'
 import * as MenuOptions from 'constants/MenuOptions'
 import * as FormControlNames from 'constants/FormControls'
 import {
@@ -41,7 +43,9 @@ export class Home extends Component {
     data: PropTypes.object.isRequired,
     error: PropTypes.object,
     pending: PropTypes.bool.isRequired,
+    translate: PropTypes.func.isRequired,
 
+    setActiveLanguage: PropTypes.func.isRequired,
     fetchRegionLevels: PropTypes.func.isRequired,
     fetchRegions: PropTypes.func.isRequired,
     fetchScenarioCollectionData: PropTypes.func.isRequired
@@ -49,6 +53,13 @@ export class Home extends Component {
 
   static defaultProps = {
     // Empty
+  }
+
+  handleLanguageOptionClick = (language) => () => {
+    this.props.setActiveLanguage(language)
+    setLanguageHeader(language)
+
+    this.props.fetchRegionLevels()
   }
 
   handleMenuGraphOptionClick = (graphOption) => () => {
@@ -107,8 +118,10 @@ export class Home extends Component {
   get header () {
     return (
       <Header
-        onMenuItemClickHandler={this.handleMenuGraphOptionClick}
-        onPrintClickHandler={this.handlePrintClick} />
+        onLanguageItemClickHandler={this.handleLanguageOptionClick}
+        onMenuGraphItemClickHandler={this.handleMenuGraphOptionClick}
+        onPrintClickHandler={this.handlePrintClick}
+        translate={this.props.translate} />
     )
   }
 
@@ -208,13 +221,15 @@ const mapStateToProps = (state) => ({
   timePeriods: state.data.timePeriods,
   data: state.data.data,
   error: state.data.error,
-  pending: state.data.pending
+  pending: state.data.pending,
+  translate: getTranslate(state.locale)
 })
 
 const mapActionsToProps = {
   fetchRegionLevels,
   fetchRegions,
-  fetchScenarioCollectionData
+  fetchScenarioCollectionData,
+  setActiveLanguage
 }
 
 export default connect(
