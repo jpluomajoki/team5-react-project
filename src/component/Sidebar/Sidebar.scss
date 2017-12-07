@@ -1,0 +1,16 @@
+@import 'base';
+
+.component {
+  position: static;
+  left: 0;
+  top: $header-height;
+  bottom: 0;
+  width: $sidebar-width;
+
+  display: flex;
+  flex-flow: column;
+
+  padding: $space-m;
+  background-color: $color-sidebar-bg;
+  overflow: scroll;
+}

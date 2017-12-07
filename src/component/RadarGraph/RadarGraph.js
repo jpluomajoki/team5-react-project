@@ -1,23 +1,28 @@
 import React from 'react'
 import PropTypes from 'prop-types'
-
 import {
   Radar,
   RadarChart,
   PolarGrid,
-  PolarAngleAxis
+  PolarAngleAxis,
+  PolarRadiusAxis,
+  Legend,
+  Tooltip
 } from 'recharts'
 
 const RadarGraph = ({ data, ...props }) => (
-  <RadarChart data={data} {...props}>
+  <RadarChart data={data.indicators} {...props}>
     <PolarGrid />
-    <PolarAngleAxis dataKey='subject' />
-    <Radar name='Mike' dataKey='A' stroke='#8884d8' fill='#8884d8' fillOpacity={0.6} />
+    <PolarAngleAxis dataKey='name' />
+    <PolarRadiusAxis />
+    <Radar dataKey='value' stroke='#8884d8' fill='#8884d8' fillOpacity={0.6} />
+    <Tooltip />
+    <Legend payload={[{ value: data.name, type: 'line', id: 'ID01' }]} />
   </RadarChart>
 )
 
 RadarGraph.propTypes = {
-  data: PropTypes.array.isRequired
+  data: PropTypes.object.isRequired
 }
 
 RadarGraph.defaultProps = {

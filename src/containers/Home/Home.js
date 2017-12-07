@@ -1,53 +1,50 @@
 import React, { Component } from 'react'
 import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
+import _ from 'lodash'
 import styles from './Home.scss'
-import {
-  Navbar,
-  Nav,
-  NavDropdown,
-  MenuItem,
-  FormGroup,
-  ControlLabel,
-  FormControl
-} from 'react-bootstrap'
 
+import * as DataUtils from 'utils/data'
 import * as MenuOptions from 'constants/MenuOptions'
-
+import * as FormControlNames from 'constants/FormControls'
+import {
+  fetchRegionLevels,
+  fetchRegions,
+  fetchScenarioCollectionData
+} from 'actions/data'
+import Header from 'component/Header'
+import Sidebar from 'component/Sidebar'
+import MultiRadarGraph from 'component/MultiRadarGraph'
 import RadarGraph from 'component/RadarGraph'
 import BarGraph from 'component/BarGraph'
 import Table from 'component/Table'
 
 const initialState = {
-  graphOption: MenuOptions.MULTI_GRAPHS
+  graphOption: MenuOptions.RADAR_GRAPH,
+  selectedValues: {
+    [FormControlNames.REGION_LEVEL]: '',
+    [FormControlNames.REGION]: '',
+    [FormControlNames.SCENARIO_COLLECTION]: '',
+    [FormControlNames.SCENARIOS]: [],
+    [FormControlNames.INDICATORS]: [],
+    [FormControlNames.TIME_PERIOD]: ''
+  }
 }
-
-const radarData = [
-  { subject: 'Math', A: 120, B: 110, fullMark: 150 },
-  { subject: 'Chinese', A: 98, B: 130, fullMark: 150 },
-  { subject: 'English', A: 86, B: 130, fullMark: 150 },
-  { subject: 'Geography', A: 99, B: 100, fullMark: 150 },
-  { subject: 'Physics', A: 85, B: 90, fullMark: 150 },
-  { subject: 'History', A: 65, B: 85, fullMark: 150 }
-]
-
-const barData = [
-  {name: 'Page A', uv: 4000, pv: 2400, amt: 2400},
-  {name: 'Page B', uv: 3000, pv: 1398, amt: 2210},
-  {name: 'Page C', uv: 2000, pv: 9800, amt: 2290},
-  {name: 'Page D', uv: 2780, pv: 3908, amt: 2000},
-  {name: 'Page E', uv: 1890, pv: 4800, amt: 2181},
-  {name: 'Page F', uv: 2390, pv: 3800, amt: 2500},
-  {name: 'Page G', uv: 3490, pv: 4300, amt: 2100}
-]
-
-const tableData = [
-
-]
 
 export class Home extends Component {
   static propTypes = {
-    // Empty
+    regionLevels: PropTypes.array.isRequired,
+    regions: PropTypes.array.isRequired,
+    scenarios: PropTypes.array.isRequired,
+    indicatorCategories: PropTypes.array.isRequired,
+    timePeriods: PropTypes.array.isRequired,
+    data: PropTypes.object.isRequired,
+    error: PropTypes.object,
+    pending: PropTypes.bool.isRequired,
+
+    fetchRegionLevels: PropTypes.func.isRequired,
+    fetchRegions: PropTypes.func.isRequired,
+    fetchScenarioCollectionData: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -59,136 +56,118 @@ export class Home extends Component {
   }
 
   handlePrintClick = () => {
-    console.log('print')
+    window.print()
   }
 
-  handleDownloadClick = () => {
-    console.log('Download')
+  // Post sidebar value change
+  // Depending on the target a next action might be acquired
+  // 1. REGION_LEVEL value change         -> fetch regions
+  // 2. SCENARIO_COLLECTION value change  -> fetch scenario collection data
+  postSidebarValueChange = (targetName) => {
+    const { selectedValues } = this.state
+
+    switch (targetName) {
+      case FormControlNames.REGION_LEVEL: {
+        const regionLevelId = selectedValues[FormControlNames.REGION_LEVEL]
+        this.props.fetchRegions(regionLevelId)
+        break
+      }
+      case FormControlNames.SCENARIO_COLLECTION: {
+        const regionId = selectedValues[FormControlNames.REGION]
+        const collectionId = selectedValues[FormControlNames.SCENARIO_COLLECTION]
+        this.props.fetchScenarioCollectionData(collectionId, regionId)
+      }
+    }
+  }
+
+  // Note: in order to use this event handler
+  // the target needs to have a name and value!
+  handleSidebarValueChange = (event) => {
+    let { selectedValues } = this.state
+    const targetName = event.target.name
+    const targetValue = event.target.value
+
+    selectedValues[targetName] = targetValue
+
+    this.setState({ selectedValues }, this.postSidebarValueChange(targetName))
+  }
+
+  isValid = () => {
+    const { selectedValues } = this.state
+
+    if (selectedValues.scenarios.length === 0 ||
+      selectedValues.indicators.length === 0 ||
+      selectedValues.timePeriod === '') {
+      return false
+    }
+
+    return true
   }
 
   get header () {
     return (
-      <Navbar className={styles.header}>
-        <Nav pullRight>
-          <NavDropdown title='Menu'>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.MULTI_GRAPHS)}>Multi graphs</MenuItem>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.POLAR_GRAPH)}>Polar graphs</MenuItem>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.BAR_GRAPH)}>Bar graphs</MenuItem>
-            <MenuItem onClick={this.handleMenuGraphOptionClick(MenuOptions.TABLE)}>Table</MenuItem>
-            <MenuItem divider />
-            <MenuItem onClick={this.handlePrintClick}>Print</MenuItem>
-            <MenuItem onClick={this.handleDownloadClick}>Download</MenuItem>
-          </NavDropdown>
-        </Nav>
-      </Navbar>
+      <Header
+        onMenuItemClickHandler={this.handleMenuGraphOptionClick}
+        onPrintClickHandler={this.handlePrintClick} />
     )
   }
 
   get sidebar () {
     return (
-      <div className={styles.sidebar}>
-        <FormGroup>
-          <ControlLabel>Region level</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Region</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Scenario collection</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Scenario</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Scenario</ControlLabel>
-          <FormControl componentClass='select' multiple>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Indicators</ControlLabel>
-          <FormControl componentClass='select' multiple>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Period</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-        <FormGroup>
-          <ControlLabel>Graph type</ControlLabel>
-          <FormControl componentClass='select'>
-            <option value='option1'>option 1</option>
-            <option value='option2'>option 2</option>
-            <option value='option3'>option 3</option>
-          </FormControl>
-        </FormGroup>
-      </div>
+      <Sidebar
+        {...this.props}
+        selectedValues={this.state.selectedValues}
+        onSelectValueChange={this.handleSidebarValueChange} />
     )
   }
 
+  // Returns graph element(s) depending on the chosen menu option
+  // data is being formatted on the go
   get innerContent () {
-    let element = null
-    switch (this.state.graphOption) {
-      case MenuOptions.MULTI_GRAPHS: {
-        element = (
-          <div>
-            <RadarGraph data={radarData} />
-            <RadarGraph data={radarData} />
-            <RadarGraph data={radarData} />
-          </div>
+    const { selectedValues, graphOption } = this.state
+    const { scenarios, indicators, timePeriod } = selectedValues
+
+    if (!this.isValid()) {
+      return null
+    }
+
+    let data
+    if (graphOption === MenuOptions.SEPARATED_GRAPHS) {
+      data = DataUtils.formatDataSeparatedGraphs({
+        data: this.props.data,
+        indicatorsIds: indicators,
+        scenarioIds: scenarios,
+        timePeriodId: timePeriod
+      })
+
+      return _.map(data, (data, index) => {
+        return (
+          <RadarGraph key={index} data={data} />
         )
-        break
-      }
-      case MenuOptions.POLAR_GRAPH: {
-        element = <RadarGraph data={radarData} />
-        break
-      }
-      case MenuOptions.BAR_GRAPH: {
-        element = <BarGraph data={barData} />
-        break
-      }
-      case MenuOptions.TABLE: {
-        element = <Table data={tableData} />
-        break
-      }
-      default: {
-        element = null
-      }
+      })
+    }
+
+    data = DataUtils.formatDataCombinedGraph({
+      data: this.props.data,
+      indicatorsIds: indicators,
+      scenarioIds: scenarios,
+      timePeriodId: timePeriod
+    })
+
+    if (graphOption === MenuOptions.RADAR_GRAPH) {
+      return (
+        <MultiRadarGraph data={data} />
+      )
+    }
+
+    if (graphOption === MenuOptions.BAR_GRAPH) {
+      return (
+        <BarGraph data={data} />
+      )
     }
 
     return (
-      <div className={styles.innerContent}>
-        {element}
-      </div>
+      <Table data={data} />
     )
   }
 
@@ -199,7 +178,7 @@ export class Home extends Component {
   }
 
   componentWillMount () {
-    // Empty
+    this.props.fetchRegionLevels()
   }
 
   componentWillReceiveProps (nextProps) {
@@ -212,7 +191,9 @@ export class Home extends Component {
         {this.header}
         <div className={styles.content}>
           {this.sidebar}
-          {this.innerContent}
+          <div id='section-to-print' className={styles.innerContent}>
+            {this.innerContent}
+          </div>
         </div>
       </div>
     )
@@ -220,11 +201,20 @@ export class Home extends Component {
 }
 
 const mapStateToProps = (state) => ({
-
+  regionLevels: state.data.regionLevels,
+  regions: state.data.regions,
+  scenarios: state.data.scenarios,
+  indicatorCategories: state.data.indicatorCategories,
+  timePeriods: state.data.timePeriods,
+  data: state.data.data,
+  error: state.data.error,
+  pending: state.data.pending
 })
 
 const mapActionsToProps = {
-
+  fetchRegionLevels,
+  fetchRegions,
+  fetchScenarioCollectionData
 }
 
 export default connect(
