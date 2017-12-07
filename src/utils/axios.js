@@ -1,7 +1,7 @@
-import axios from 'axios';
-import * as config from '../config';
+import axios from 'axios'
+import * as config from '../config'
 
-axios.defaults.responseType = 'json';
+axios.defaults.responseType = 'json'
 
 let defaultHeaders = {
   Accept: 'application/json',
@@ -21,4 +21,4 @@ export const setLanguageHeader = value => {
     ...defaultHeaders,
     'Accept-Language': value
   }
-};
+}
