@@ -45,7 +45,7 @@ export default class Sidebar extends Component {
   }
 
   // Get scenario collections from chosen region
-  get scenarioCollections () {
+  get scenarioCollections() {
     if (!this.props.regions || !this.props.selectedValues[FormControlNames.REGION]) {
       return null
     }
@@ -55,7 +55,7 @@ export default class Sidebar extends Component {
     return chosenRegion ? chosenRegion.scenarioCollections : null
   }
 
-  render () {
+  render() {
     const translate = this.props.translate
     const {
       regionLevels,
@@ -77,7 +77,7 @@ export default class Sidebar extends Component {
             <option disabled selected>select</option>
             {_.map(regionLevels, (level, index) => {
               return (
-                <option key={index} value={level.id}>
+                <option key={index} value={level.id} title={level.description}>
                   {level.name}
                 </option>
               )
@@ -93,7 +93,7 @@ export default class Sidebar extends Component {
             <option disabled selected>select</option>
             {_.map(regions, (region, index) => {
               return (
-                <option key={index} value={region.id}>
+                <option key={index} value={region.id} title={region.description}>
                   {region.name}
                 </option>
               )
@@ -109,7 +109,7 @@ export default class Sidebar extends Component {
             <option disabled selected>select</option>
             {_.map(this.scenarioCollections, (collection, index) => {
               return (
-                <option key={index} value={collection.id}>
+                <option key={index} value={collection.id} title={collection.description}>
                   {collection.name}
                 </option>
               )
@@ -127,7 +127,7 @@ export default class Sidebar extends Component {
             <option disabled selected>select</option>
             {_.map(scenarios, (scenario, index) => {
               return (
-                <option key={index} value={scenario.id}>
+                <option key={index} value={scenario.id} title={scenario.description}>
                   {scenario.name}
                 </option>
               )
@@ -143,15 +143,25 @@ export default class Sidebar extends Component {
             inputRef={ref => this._indicatorsInput = ref}
             onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}>
             <option disabled selected>select</option>
-            {_.map(indicatorCategories, (category, index) =>
-              _.map(category.indicators, (indicator, index) => {
-                return (
-                  <option key={index} value={indicator.id}>
-                    {indicator.name}
-                  </option>
-                )
-              })
-            )}
+            {_.map(indicatorCategories, (indicatorCategory, index) => {
+              return [
+                <option
+                  disabled
+                  key={indicatorCategory.id}
+                  value={indicatorCategory.id}
+                  title={indicatorCategory.description}
+                >
+                  {"---" + indicatorCategory.name + "---"}
+                </option>,
+                _.map(indicatorCategory.indicators, (indicator, index) => {
+                  return (
+                    <option key={indicator.id} value={indicator.id} title={indicator.description}>
+                      {indicator.name}
+                    </option>
+                  );
+                })
+              ];
+            })}
           </FormControl>
         </FormGroup>
         <FormGroup>
@@ -163,7 +173,7 @@ export default class Sidebar extends Component {
             <option disabled selected>select</option>
             {_.map(timePeriods, (period, index) => {
               return (
-                <option key={index} value={period.id}>
+                <option key={index} value={period.id} title={period.description}>
                   {`${period.yearStart}-${period.yearEnd}`}
                 </option>
               )
