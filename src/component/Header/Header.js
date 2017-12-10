@@ -5,7 +5,8 @@ import {
   Navbar,
   Nav,
   NavDropdown,
-  MenuItem
+  MenuItem,
+  NavItem
 } from 'react-bootstrap'
 
 import * as MenuOptions from 'constants/MenuOptions'
@@ -25,6 +26,9 @@ const Header = ({ onLanguageItemClickHandler, onMenuGraphItemClickHandler, onPri
         <MenuItem divider />
         <MenuItem onClick={onPrintClickHandler}>{translate('print')}</MenuItem>
       </NavDropdown>
+      <NavItem href="mailto:metsamittari@luke.fi">
+        {translate('feedback')}
+      </NavItem>
     </Nav>
   </Navbar>
 )
