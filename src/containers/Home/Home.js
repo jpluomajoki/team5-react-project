@@ -75,6 +75,7 @@ export class Home extends Component {
   // 1. REGION_LEVEL value change         -> fetch regions
   // 2. SCENARIO_COLLECTION value change  -> fetch scenario collection data
   postSidebarValueChange = (targetName) => {
+    console.log(targetName)
     const { selectedValues } = this.state
 
     switch (targetName) {
@@ -127,19 +128,16 @@ export class Home extends Component {
 
   get sidebar () {
     return (
-      <Sidebar
-        {...this.props}
-        selectedValues={this.state.selectedValues}
-        onSelectValueChange={this.handleSidebarValueChange} />
+      <Sidebar />
     )
   }
 
   // Returns graph element(s) depending on the chosen menu option
   // data is being formatted on the go
   get innerContent () {
-    const { selectedValues, graphOption } = this.state
-    const { scenarios, indicators, timePeriod } = selectedValues
-
+    const { graphOption } = this.state
+    console.log(graphOption)
+    const { scenarios, indicators, timePeriod } = this.props.selectedValues
     if (!this.isValid()) {
       return null
     }
@@ -214,6 +212,7 @@ export class Home extends Component {
 }
 
 const mapStateToProps = (state) => ({
+  selectedValues: state.data.selectedValues,
   regionLevels: state.data.regionLevels,
   regions: state.data.regions,
   scenarios: state.data.scenarios,
