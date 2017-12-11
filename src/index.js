@@ -4,6 +4,7 @@ import { browserHistory } from 'react-router'
 import { syncHistoryWithStore } from 'react-router-redux'
 import configureStore from './store'
 import Root from 'containers/Root'
+import { initialize, addTranslation } from 'react-localize-redux'
 
 const initialState = {
   // Empty
@@ -12,6 +13,13 @@ const initialState = {
 const store = configureStore(initialState, browserHistory)
 const history = syncHistoryWithStore(browserHistory, store)
 const rootElement = document.getElementById('root')
+const languages = [
+  { name: 'Finnish', code: 'fi' },
+  { name: 'English', code: 'en' }
+]
+const translations = require('./constants/translations.json')
+store.dispatch(initialize(languages))
+store.dispatch(addTranslation(translations))
 
 if (process.env.NODE_ENV === 'production') {
   render(<Root store={store} history={history} />, rootElement)

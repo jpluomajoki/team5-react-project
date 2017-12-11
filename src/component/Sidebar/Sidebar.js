@@ -1,9 +1,15 @@
-import React, { Component } from "react";
-import PropTypes from "prop-types";
-import styles from "./Sidebar.scss";
-import _ from "lodash";
-import { FormGroup, ControlLabel, FormControl, Button } from "react-bootstrap";
-import * as FormControlNames from "constants/FormControls";
+import React, { Component } from 'react'
+import PropTypes from 'prop-types'
+import styles from './Sidebar.scss'
+import _ from 'lodash'
+import {
+  FormGroup,
+  ControlLabel,
+  FormControl,
+  Button
+} from 'react-bootstrap'
+import * as FormControlNames from 'constants/FormControls'
+import * as queryStringUtils from 'utils/queryString'
 import * as InformationHTML from "constants/InformationHTML";
 
 export default class Sidebar extends Component {
@@ -16,7 +22,9 @@ export default class Sidebar extends Component {
     selectedValues: PropTypes.object.isRequired,
     onSelectValueChange: PropTypes.func.isRequired,
     onToggleInformationModalClick: PropTypes.func.isRequired
+    translate: PropTypes.func.isRequired
   };
+}
 
   static defaultProps = {
     // Empty
@@ -61,7 +69,39 @@ export default class Sidebar extends Component {
     return chosenRegion ? chosenRegion.scenarioCollections : null;
   }
 
-  render() {
+  get melaTupaLink () {
+    const { selectedValues: {
+      region,
+      scenarioCollection,
+      scenarios,
+      indicators,
+      timePeriod
+    } } = this.props
+
+    if (!region || !scenarioCollection || !scenarios || !indicators || !timePeriod) {
+      return null
+    }
+
+    const url = queryStringUtils.getMeluTupaUrl({
+      scenarioCollectionId: scenarioCollection,
+      regionId: region,
+      scenarioIds: scenarios,
+      indicatorIds: indicators,
+      timePeriodId: timePeriod,
+      language: 'fi'
+    })
+
+    console.log(url)
+
+    return (
+      <a disabled href={`http://mela2.metla.fi/mela/tupa/index.php?${url}`} target='_blank'>
+        Mela Tupa
+      </a>
+    )
+  }
+
+  render () {
+    const translate = this.props.translate
     const {
       regionLevels,
       regions,
@@ -76,7 +116,7 @@ export default class Sidebar extends Component {
       <div className={styles.component}>
         <FormGroup>
           <ControlLabel>
-            Region level{" "}
+            {translate('region level')}
             <Button
               bsStyle="link"
               name={InformationHTML.REGIONLEVEL_INDICATOR}
@@ -104,7 +144,7 @@ export default class Sidebar extends Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>
-            Region{" "}
+            {translate('region')}
             <Button
               bsStyle="link"
               name={InformationHTML.REGION_INDICATOR}
@@ -132,7 +172,7 @@ export default class Sidebar extends Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>
-            Scenario Collection{" "}
+            {translate('scenario collection')}
             <Button
               bsStyle="link"
               name={InformationHTML.SCENARIOCOLLECTION_INDICATOR}
@@ -160,7 +200,7 @@ export default class Sidebar extends Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>
-            Scenario{" "}
+            {translate('scenario')}
             <Button
               bsStyle="link"
               name={InformationHTML.SCENARIOS_INDICATOR}
@@ -190,7 +230,7 @@ export default class Sidebar extends Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>
-            Indicators{" "}
+            {translate('indicators')}
             <Button
               bsStyle="link"
               name={InformationHTML.INDICATORS_INDICATOR}
@@ -222,7 +262,7 @@ export default class Sidebar extends Component {
         </FormGroup>
         <FormGroup>
           <ControlLabel>
-            Time period{" "}
+            {translate('time period')}
             <Button
               bsStyle="link"
               name={InformationHTML.TIMEPERIOD_INDICATOR}
@@ -248,6 +288,7 @@ export default class Sidebar extends Component {
             })}
           </FormControl>
         </FormGroup>
+        {this.melaTupaLink}
       </div>
     );
   }
