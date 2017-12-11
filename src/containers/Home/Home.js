@@ -3,7 +3,7 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import styles from './Home.scss'
-import { getTranslate, setActiveLanguage } from 'react-localize-redux'
+import { getTranslate, setActiveLanguage, getActiveLanguage } from 'react-localize-redux'
 
 import * as DataUtils from 'utils/data'
 import { setLanguageHeader } from 'utils/axios'
@@ -36,7 +36,7 @@ const initialState = {
   },
   informationModal: {
     showModal: false,
-    data: InformationHTML.INFORMATION[InformationHTML.DEFAULT_INDICATOR]
+    data: InformationHTML.DEFAULT_INFORMATION
   }
 };
 
@@ -126,10 +126,18 @@ export class Home extends Component {
   };
 
   onToggleInformationModalClick = event => {
-    //Maybe make a switch that checks what language is selected.
-    //Depending on how translation gets implemented.
     let { informationModal } = this.state;
-    informationModal.data = InformationHTML.INFORMATION[event.target.name];
+
+    if (event.target.name !== InformationHTML.CLOSE_INDICATOR) {
+      switch (this.props.activeLanguage.code) {
+        case ("en"):
+          informationModal.data = InformationHTML.INFORMATION_EN[event.target.name];
+          break;
+        case ("fi"):
+          informationModal.data = InformationHTML.INFORMATION_FI[event.target.name];
+          break;
+      }
+    }
     informationModal.showModal = !this.state.informationModal.showModal;
     this.setState({ informationModal });
   };
@@ -249,7 +257,8 @@ const mapStateToProps = state => ({
   data: state.data.data,
   error: state.data.error,
   pending: state.data.pending,
-  translate: getTranslate(state.locale)
+  translate: getTranslate(state.locale),
+  activeLanguage: getActiveLanguage(state.locale)
 });
 
 const mapActionsToProps = {
