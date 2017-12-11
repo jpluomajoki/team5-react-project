@@ -10,8 +10,9 @@ import {
 } from 'react-bootstrap'
 
 import * as MenuOptions from 'constants/MenuOptions'
+import { GENERAL_INFORMATION_INDICATOR } from 'constants/InformationHTML'
 
-const Header = ({ onLanguageItemClickHandler, onMenuGraphItemClickHandler, onPrintClickHandler, translate }) => (
+const Header = ({ onLanguageItemClickHandler, onMenuGraphItemClickHandler, onPrintClickHandler, translate, onToggleInformationModalClick }) => (
   <Navbar className={styles.component}>
     <Nav pullRight>
       <NavDropdown title={translate('language')} id='language-dropdown'>
@@ -29,6 +30,9 @@ const Header = ({ onLanguageItemClickHandler, onMenuGraphItemClickHandler, onPri
       <NavItem href="mailto:metsamittari@luke.fi">
         {translate('feedback')}
       </NavItem>
+      <NavItem name={GENERAL_INFORMATION_INDICATOR} onClick={onToggleInformationModalClick}>
+        {translate('help')}
+      </NavItem>
     </Nav>
   </Navbar>
 )
@@ -37,7 +41,8 @@ Header.propTypes = {
   onLanguageItemClickHandler: PropTypes.func.isRequired,
   onMenuGraphItemClickHandler: PropTypes.func.isRequired,
   onPrintClickHandler: PropTypes.func.isRequired,
-  translate: PropTypes.func.isRequired
+  translate: PropTypes.func.isRequired,
+  onToggleInformationModalClick: PropTypes.func.isRequired
 }
 
 Header.defaultProps = {

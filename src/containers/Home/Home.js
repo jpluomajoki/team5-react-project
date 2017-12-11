@@ -148,7 +148,8 @@ export class Home extends Component {
         onLanguageItemClickHandler={this.handleLanguageOptionClick}
         onMenuGraphItemClickHandler={this.handleMenuGraphOptionClick}
         onPrintClickHandler={this.handlePrintClick}
-        translate={this.props.translate} />
+        translate={this.props.translate}
+        onToggleInformationModalClick={this.onToggleInformationModalClick} />
     )
   }
 
