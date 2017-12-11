@@ -1,12 +1,21 @@
 @import 'base';
 
+:global {
+  .control-label {
+    width: 100%;
+    display: inline-flex;
+    align-items: center;
+    justify-content: space-between;
+  }
+}
+
 .component {
   position: static;
   left: 0;
   top: $header-height;
   bottom: 0;
   width: $sidebar-width;
-
+  min-width: 155px;
   display: flex;
   flex-flow: column;
 
