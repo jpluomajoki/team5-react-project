@@ -21,10 +21,9 @@ export default class Sidebar extends Component {
     timePeriods: PropTypes.array.isRequired,
     selectedValues: PropTypes.object.isRequired,
     onSelectValueChange: PropTypes.func.isRequired,
-    onToggleInformationModalClick: PropTypes.func.isRequired
+    onToggleInformationModalClick: PropTypes.func.isRequired,
     translate: PropTypes.func.isRequired
   };
-}
 
   static defaultProps = {
     // Empty
@@ -69,7 +68,7 @@ export default class Sidebar extends Component {
     return chosenRegion ? chosenRegion.scenarioCollections : null;
   }
 
-  get melaTupaLink () {
+  get melaTupaLink() {
     const { selectedValues: {
       region,
       scenarioCollection,
@@ -101,7 +100,6 @@ export default class Sidebar extends Component {
   }
 
   render() {
-    const translate = this.props.translate
     const {
       regionLevels,
       regions,
@@ -109,9 +107,9 @@ export default class Sidebar extends Component {
       indicatorCategories,
       timePeriods,
       onSelectValueChange,
-      onToggleInformationModalClick
+      onToggleInformationModalClick,
+      translate
     } = this.props;
-
     return (
       <div className={styles.component}>
         <FormGroup>
