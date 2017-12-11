@@ -1,11 +1,11 @@
 import _ from 'lodash'
 
 export const formatDataSeparatedGraphs = ({ data, scenarioIds, indicatorsIds, timePeriodId }) => {
-  const scenarios = _.filter(data.scenarios, scenario => scenarioIds.indexOf(String(scenario.id)) !== -1)
+  const scenarios = _.filter(data.scenarios, scenario => scenarioIds.indexOf(scenario.id) !== -1)
   let indicators = []
 
   _.forEach(data.indicatorCategories, category => {
-    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id)) !== -1))
+    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(indicator.id) !== -1))
   })
 
   _.forEach(scenarios, scenario => {
@@ -13,7 +13,7 @@ export const formatDataSeparatedGraphs = ({ data, scenarioIds, indicatorsIds, ti
 
     _.forEach(indicators, indicator => {
       const belongingValues = _.filter(data.values, value => {
-        if (timePeriodId !== String(value.timePeriodId)) { // value doesn't belong to time period
+        if (timePeriodId !== value.timePeriodId) { // value doesn't belong to time period
           return false
         }
 
@@ -41,16 +41,15 @@ export const formatDataSeparatedGraphs = ({ data, scenarioIds, indicatorsIds, ti
       })
     })
   })
-
   return scenarios
 }
 
 export const formatDataCombinedGraph = ({ data, scenarioIds, indicatorsIds, timePeriodId }) => {
-  const scenarios = _.filter(data.scenarios, scenario => scenarioIds.indexOf(String(scenario.id)) !== -1)
+  const scenarios = _.filter(data.scenarios, scenario => scenarioIds.indexOf(scenario.id) !== -1)
   let indicators = []
 
   _.forEach(data.indicatorCategories, category => {
-    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(String(indicator.id)) !== -1))
+    indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(indicator.id) !== -1))
   })
 
   indicators = _.map(indicators, indicator => ({
@@ -62,7 +61,7 @@ export const formatDataCombinedGraph = ({ data, scenarioIds, indicatorsIds, time
   _.forEach(indicators, indicator => {
     _.forEach(scenarios, scenario => {
       const belongingValues = _.filter(data.values, value => {
-        if (timePeriodId !== String(value.timePeriodId)) { // value doesn't belong to time period
+        if (timePeriodId !== value.timePeriodId) { // value doesn't belong to time period
           return false
         }
 

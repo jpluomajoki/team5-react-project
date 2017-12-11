@@ -12,7 +12,8 @@ import * as FormControlNames from 'constants/FormControls'
 import {
   fetchRegionLevels,
   fetchRegions,
-  fetchScenarioCollectionData
+  fetchScenarioCollectionData,
+  selectScenarioCollection
 } from 'actions/data'
 import Header from 'component/Header'
 import Sidebar from 'component/Sidebar'
@@ -58,7 +59,6 @@ export class Home extends Component {
   handleLanguageOptionClick = (language) => () => {
     this.props.setActiveLanguage(language)
     setLanguageHeader(language)
-
     this.props.fetchRegionLevels()
   }
 
@@ -75,7 +75,6 @@ export class Home extends Component {
   // 1. REGION_LEVEL value change         -> fetch regions
   // 2. SCENARIO_COLLECTION value change  -> fetch scenario collection data
   postSidebarValueChange = (targetName) => {
-    console.log(targetName)
     const { selectedValues } = this.state
 
     switch (targetName) {
@@ -105,14 +104,15 @@ export class Home extends Component {
   }
 
   isValid = () => {
-    const { selectedValues } = this.state
+    // const { selectedValues } = this.state
+
+    const selectedValues = this.props.selectedValues
 
     if (selectedValues.scenarios.length === 0 ||
       selectedValues.indicators.length === 0 ||
       selectedValues.timePeriod === '') {
       return false
     }
-
     return true
   }
 
@@ -136,12 +136,10 @@ export class Home extends Component {
   // data is being formatted on the go
   get innerContent () {
     const { graphOption } = this.state
-    console.log(graphOption)
     const { scenarios, indicators, timePeriod } = this.props.selectedValues
     if (!this.isValid()) {
       return null
     }
-
     let data
     if (graphOption === MenuOptions.SEPARATED_GRAPHS) {
       data = DataUtils.formatDataSeparatedGraphs({
@@ -228,7 +226,8 @@ const mapActionsToProps = {
   fetchRegionLevels,
   fetchRegions,
   fetchScenarioCollectionData,
-  setActiveLanguage
+  setActiveLanguage,
+  selectScenarioCollection
 }
 
 export default connect(

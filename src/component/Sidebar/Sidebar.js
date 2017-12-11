@@ -80,23 +80,17 @@ class Sidebar extends Component {
     if (!newProps.pending) {
       const oldSelectedValues = this.props.selectedValues
       const newSelectedValues = newProps.selectedValues
-      if (oldSelectedValues.regionLevel !== newSelectedValues.regionLevel) {
+      if (oldSelectedValues.regionLevel !== newSelectedValues.regionLevel && newSelectedValues.regionLevel !== -1) {
         this.props.fetchRegions(newSelectedValues.regionLevel)
       }
-      if (newSelectedValues.scenarioCollection !== oldSelectedValues.scenarioCollection) {
+      if (newSelectedValues.scenarioCollection !== oldSelectedValues.scenarioCollection && newSelectedValues.scenarioCollection !== -1) {
         this.props.fetchScenarioCollectionData(newSelectedValues.scenarioCollection, newSelectedValues.region)
       }
     }
   }
 
-  onSelectValueChange (e) {
-    console.log(e.target.value)
-  }
-
   render () {
     const translate = this.props.translate
-    console.log('regions', this.props.regions)
-    console.log('selectedregion', this.props.selectedValues.region)
     const scenarioCollections = this.props.regions.length === 0
       ? []
       : this.props.regions.find(region => region.id === this.props.selectedValues.region).scenarioCollections

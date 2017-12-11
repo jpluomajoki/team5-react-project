@@ -42,7 +42,15 @@ const demoReducer = reduce(initialState, {
     }
   }),
 
-  [ActionTypes.FETCH_REGIONS]: setPending,
+  [ActionTypes.FETCH_REGIONS]: (state, { payload }) => ({
+    pending: true,
+    error: null,
+    selectedValues: {
+      ...state.selectedValues,
+      regionLevel: -1,
+      scenarioCollection: -1
+    }
+  }),
   [ActionTypes.FETCH_REGIONS + '_ERROR']: setError,
   [ActionTypes.FETCH_REGIONS + '_SUCCESS']: (state, { payload }) => ({
     ...initialState,
@@ -82,7 +90,8 @@ const demoReducer = reduce(initialState, {
   [ActionTypes.SELECT_REGION]: (state, { payload }) => ({
     selectedValues: {
       ...state.selectedValues,
-      region: payload.id
+      region: payload.id,
+      scenarioCollection: state.regions.find(region => region.id === payload.id).scenarioCollections[0].id
     }
   }),
 
@@ -110,7 +119,7 @@ const demoReducer = reduce(initialState, {
   [ActionTypes.SELECT_PERIOD]: (state, { payload }) => ({
     selectedValues: {
       ...state.selectedValues,
-      period: payload.id
+      timePeriod: payload.id
     }
   })
 })
