@@ -8,6 +8,7 @@ import {
   FormControl
 } from 'react-bootstrap'
 import * as FormControlNames from 'constants/FormControls'
+import * as queryStringUtils from 'utils/queryString'
 
 export default class Sidebar extends Component {
   static propTypes = {
@@ -52,6 +53,37 @@ export default class Sidebar extends Component {
     const chosenRegion = _.find(this.props.regions, r => String(r.id) === this.props.selectedValues[FormControlNames.REGION])
 
     return chosenRegion ? chosenRegion.scenarioCollections : null
+  }
+
+  get melaTupaLink () {
+    const { selectedValues: {
+      region,
+      scenarioCollection,
+      scenarios,
+      indicators,
+      timePeriod
+    } } = this.props
+
+    if (!region || !scenarioCollection || !scenarios || !indicators || !timePeriod) {
+      return null
+    }
+
+    const url = queryStringUtils.getMeluTupaUrl({
+      scenarioCollectionId: scenarioCollection,
+      regionId: region,
+      scenarioIds: scenarios,
+      indicatorIds: indicators,
+      timePeriodId: timePeriod,
+      language: 'fi'
+    })
+
+    console.log(url)
+
+    return (
+      <a disabled href={`http://mela2.metla.fi/mela/tupa/index.php?${url}`} target='_blank'>
+        Mela Tupa
+      </a>
+    )
   }
 
   render () {
@@ -168,6 +200,7 @@ export default class Sidebar extends Component {
             })}
           </FormControl>
         </FormGroup>
+        {this.melaTupaLink}
       </div>
     )
   }

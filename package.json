@@ -82,6 +82,7 @@
     "babel-polyfill": "^6.26.0",
     "d3-scale": "^1.0.7",
     "lodash": "^4.17.4",
+    "query-string": "^5.0.1",
     "react": "^15.6.1",
     "react-bootstrap": "^0.31.5",
     "react-bootstrap-extended": "0.0.5",
