@@ -24,8 +24,8 @@
     "Time period"
   ],
   "menu": [
-    "Valikko",
-    "Menu"
+    "Kaaviot",
+    "Graphs"
   ],
   "separated graphs": [
     "Erilliset kaaviot",
@@ -52,11 +52,11 @@
     "Language"
   ],
   "feedback": [
-    "Send Feedback FI",
+    "Lähetä palautetta",
     "Send Feedback"
   ],
   "help": [
-    "Auta",
+    "Apua",
     "Help"
   ]
 }
