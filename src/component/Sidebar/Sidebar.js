@@ -5,7 +5,8 @@ import _ from 'lodash'
 import {
   FormGroup,
   ControlLabel,
-  FormControl
+  FormControl,
+  Button
 } from 'react-bootstrap'
 import { connect } from 'react-redux'
 import { getTranslate } from 'react-localize-redux'
@@ -21,6 +22,8 @@ import {
   selectPeriod
 } from '../../actions/data'
 import * as FormControlNames from 'constants/FormControls'
+import * as queryStringUtils from 'utils/queryString'
+import * as InformationHTML from 'constants/InformationHTML';
 
 class Sidebar extends Component {
   static propTypes = {
@@ -30,23 +33,27 @@ class Sidebar extends Component {
     indicatorCategories: PropTypes.array.isRequired,
     timePeriods: PropTypes.array.isRequired,
     translate: PropTypes.func.isRequired,
-    selectedValues: PropTypes.object.isRequired
+    selectedValues: PropTypes.object.isRequired,
+    onToggleInformationModalClick: PropTypes.func.isRequired
   }
 
   static defaultProps = {
     // Empty
-  }
+  };
 
-  _scenariosInput = null
-  _indicatorsInput = null
+  _scenariosInput = null;
+  _indicatorsInput = null;
 
   // Note: In order to get all the values from a multiple select when the value changes
   // we need to handle this a bit differently.
   // This handler gets all the selected values on every value change.
   // Afterwards it will recreate a 'fake' event so that we can pass it along to the parent container
   // which can handle it on it's turn, like a normal on change event.
-  handleMultipleSelectValueChange = (ref) => (event) => {
-    const values = [].map.call(this[ref].selectedOptions, option => option.value)
+  handleMultipleSelectValueChange = ref => event => {
+    const values = [].map.call(
+      this[ref].selectedOptions,
+      option => option.value
+    )
 
     const fakeEvent = {}
     fakeEvent.target = {}
@@ -67,13 +74,50 @@ class Sidebar extends Component {
 
   // Get scenario collections from chosen region
   get scenarioCollections () {
-    if (!this.props.regions || !this.props.selectedValues[FormControlNames.REGION]) {
+    if (
+      !this.props.regions ||
+      !this.props.selectedValues[FormControlNames.REGION]
+    ) {
       return null
     }
 
-    const chosenRegion = _.find(this.props.regions, r => String(r.id) === this.props.selectedValues[FormControlNames.REGION])
+    const chosenRegion = _.find(
+      this.props.regions,
+      r => String(r.id) === this.props.selectedValues[FormControlNames.REGION]
+    )
 
     return chosenRegion ? chosenRegion.scenarioCollections : null
+  }
+
+  get melaTupaLink () {
+    const { selectedValues: {
+      region,
+      scenarioCollection,
+      scenarios,
+      indicators,
+      timePeriod
+    } } = this.props
+
+    if (!region || !scenarioCollection || !scenarios || !indicators || !timePeriod) {
+      return null
+    }
+
+    const url = queryStringUtils.getMeluTupaUrl({
+      scenarioCollectionId: scenarioCollection,
+      regionId: region,
+      scenarioIds: scenarios,
+      indicatorIds: indicators,
+      timePeriodId: timePeriod,
+      language: 'fi'
+    })
+
+    console.log(url)
+
+    return (
+      <a disabled href={`http://mela2.metla.fi/mela/tupa/index.php?${url}`} target='_blank'>
+        Mela Tupa
+      </a>
+    )
   }
 
   componentWillReceiveProps (newProps) {
@@ -94,11 +138,21 @@ class Sidebar extends Component {
     const scenarioCollections = this.props.regions.length === 0
       ? []
       : this.props.regions.find(region => region.id === this.props.selectedValues.region).scenarioCollections
+    const onToggleInformationModalClick = this.props.onToggleInformationModalClick
 
     return (
       <div className={styles.component}>
         <FormGroup>
-          <ControlLabel>{translate('region level')}</ControlLabel>
+          <ControlLabel>
+            {translate('region level')}
+            <Button
+              bsStyle='link'
+              name={InformationHTML.REGIONLEVEL_INDICATOR}
+              onClick={onToggleInformationModalClick}
+            >
+              [?]
+            </Button>
+          </ControlLabel>
           <FormControl
             name={FormControlNames.REGION_LEVEL}
             componentClass='select'
@@ -116,7 +170,16 @@ class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{translate('region')}</ControlLabel>
+          <ControlLabel>
+            {translate('region')}
+            <Button
+              bsStyle='link'
+              name={InformationHTML.REGION_INDICATOR}
+              onClick={onToggleInformationModalClick}
+            >
+              [?]
+            </Button>
+          </ControlLabel>
           <FormControl
             name={FormControlNames.REGION}
             componentClass='select'
@@ -134,7 +197,16 @@ class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{translate('scenario collection')}</ControlLabel>
+          <ControlLabel>
+            {translate('scenario collection')}
+            <Button
+              bsStyle='link'
+              name={InformationHTML.SCENARIOCOLLECTION_INDICATOR}
+              onClick={onToggleInformationModalClick}
+            >
+              [?]
+            </Button>
+          </ControlLabel>
           <FormControl
             name={FormControlNames.SCENARIO_COLLECTION}
             componentClass='select'
@@ -152,7 +224,16 @@ class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{translate('scenario')}</ControlLabel>
+          <ControlLabel>
+            {translate('scenario')}
+            <Button
+              bsStyle='link'
+              name={InformationHTML.SCENARIOS_INDICATOR}
+              onClick={onToggleInformationModalClick}
+            >
+              [?]
+            </Button>
+          </ControlLabel>
           <FormControl
             multiple
             name='scenarios'
@@ -171,7 +252,16 @@ class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{translate('indicators')}</ControlLabel>
+          <ControlLabel>
+            {translate('indicators')}
+            <Button
+              bsStyle='link'
+              name={InformationHTML.INDICATORS_INDICATOR}
+              onClick={onToggleInformationModalClick}
+            >
+              [?]
+            </Button>
+          </ControlLabel>
           <FormControl
             multiple
             name={FormControlNames.INDICATORS}
@@ -195,7 +285,16 @@ class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         <FormGroup>
-          <ControlLabel>{translate('time period')}</ControlLabel>
+          <ControlLabel>
+            {translate('time period')}
+            <Button
+              bsStyle='link'
+              name={InformationHTML.TIMEPERIOD_INDICATOR}
+              onClick={onToggleInformationModalClick}
+            >
+              [?]
+            </Button>
+          </ControlLabel>
           <FormControl
             name={FormControlNames.TIME_PERIOD}
             componentClass='select'
@@ -213,6 +312,7 @@ class Sidebar extends Component {
             }
           </FormControl>
         </FormGroup>
+        {this.melaTupaLink}
       </div>
     )
   }

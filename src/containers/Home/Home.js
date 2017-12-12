@@ -3,12 +3,14 @@ import PropTypes from 'prop-types'
 import { connect } from 'react-redux'
 import _ from 'lodash'
 import styles from './Home.scss'
-import { getTranslate, setActiveLanguage } from 'react-localize-redux'
+import { getTranslate, setActiveLanguage, getActiveLanguage } from 'react-localize-redux'
 
 import * as DataUtils from 'utils/data'
 import { setLanguageHeader } from 'utils/axios'
 import * as MenuOptions from 'constants/MenuOptions'
 import * as FormControlNames from 'constants/FormControls'
+import * as InformationHTML from 'constants/InformationHTML'
+
 import {
   fetchRegionLevels,
   fetchRegions,
@@ -21,6 +23,7 @@ import MultiRadarGraph from 'component/MultiRadarGraph'
 import RadarGraph from 'component/RadarGraph'
 import BarGraph from 'component/BarGraph'
 import Table from 'component/Table'
+import InformationModal from 'component/InformationModal'
 
 const initialState = {
   graphOption: MenuOptions.RADAR_GRAPH,
@@ -31,6 +34,10 @@ const initialState = {
     [FormControlNames.SCENARIOS]: [],
     [FormControlNames.INDICATORS]: [],
     [FormControlNames.TIME_PERIOD]: ''
+  },
+  informationModal: {
+    showModal: false,
+    data: InformationHTML.DEFAULT_INFORMATION
   }
 }
 
@@ -50,11 +57,11 @@ export class Home extends Component {
     fetchRegionLevels: PropTypes.func.isRequired,
     fetchRegions: PropTypes.func.isRequired,
     fetchScenarioCollectionData: PropTypes.func.isRequired
-  }
+  };
 
   static defaultProps = {
     // Empty
-  }
+  };
 
   handleLanguageOptionClick = (language) => () => {
     this.props.setActiveLanguage(language)
@@ -68,13 +75,13 @@ export class Home extends Component {
 
   handlePrintClick = () => {
     window.print()
-  }
+  };
 
   // Post sidebar value change
   // Depending on the target a next action might be acquired
   // 1. REGION_LEVEL value change         -> fetch regions
   // 2. SCENARIO_COLLECTION value change  -> fetch scenario collection data
-  postSidebarValueChange = (targetName) => {
+  postSidebarValueChange = targetName => {
     const { selectedValues } = this.state
 
     switch (targetName) {
@@ -85,15 +92,16 @@ export class Home extends Component {
       }
       case FormControlNames.SCENARIO_COLLECTION: {
         const regionId = selectedValues[FormControlNames.REGION]
-        const collectionId = selectedValues[FormControlNames.SCENARIO_COLLECTION]
+        const collectionId =
+          selectedValues[FormControlNames.SCENARIO_COLLECTION]
         this.props.fetchScenarioCollectionData(collectionId, regionId)
       }
     }
-  }
+  };
 
   // Note: in order to use this event handler
   // the target needs to have a name and value!
-  handleSidebarValueChange = (event) => {
+  handleSidebarValueChange = event => {
     let { selectedValues } = this.state
     const targetName = event.target.name
     const targetValue = event.target.value
@@ -101,20 +109,40 @@ export class Home extends Component {
     selectedValues[targetName] = targetValue
 
     this.setState({ selectedValues }, this.postSidebarValueChange(targetName))
-  }
+  };
 
   isValid = () => {
     // const { selectedValues } = this.state
 
     const selectedValues = this.props.selectedValues
 
-    if (selectedValues.scenarios.length === 0 ||
+    if (
+      selectedValues.scenarios.length === 0 ||
       selectedValues.indicators.length === 0 ||
-      selectedValues.timePeriod === '') {
+      selectedValues.timePeriod === ''
+    ) {
       return false
     }
+
     return true
-  }
+  };
+
+  onToggleInformationModalClick = event => {
+    let { informationModal } = this.state
+
+    if (event.target.name !== InformationHTML.CLOSE_INDICATOR) {
+      switch (this.props.activeLanguage.code) {
+        case ('en'):
+          informationModal.data = InformationHTML.INFORMATION_EN[event.target.name]
+          break
+        case ('fi'):
+          informationModal.data = InformationHTML.INFORMATION_FI[event.target.name]
+          break
+      }
+    }
+    informationModal.showModal = !this.state.informationModal.showModal
+    this.setState({ informationModal })
+  };
 
   get header () {
     return (
@@ -122,13 +150,25 @@ export class Home extends Component {
         onLanguageItemClickHandler={this.handleLanguageOptionClick}
         onMenuGraphItemClickHandler={this.handleMenuGraphOptionClick}
         onPrintClickHandler={this.handlePrintClick}
-        translate={this.props.translate} />
+        translate={this.props.translate}
+        onToggleInformationModalClick={this.onToggleInformationModalClick} />
     )
   }
 
   get sidebar () {
     return (
-      <Sidebar />
+      <Sidebar
+        onToggleInformationModalClick={this.onToggleInformationModalClick}
+      />
+    )
+  }
+
+  get informationModal () {
+    return (
+      <InformationModal
+        informationModal={this.state.informationModal}
+        onToggleInformationModalClick={this.onToggleInformationModalClick}
+      />
     )
   }
 
@@ -150,9 +190,7 @@ export class Home extends Component {
       })
 
       return _.map(data, (data, index) => {
-        return (
-          <RadarGraph key={index} data={data} />
-        )
+        return <RadarGraph key={index} data={data} />
       })
     }
 
@@ -164,26 +202,24 @@ export class Home extends Component {
     })
 
     if (graphOption === MenuOptions.RADAR_GRAPH) {
-      return (
-        <MultiRadarGraph data={data} />
-      )
+      return <MultiRadarGraph data={data} />
     }
 
     if (graphOption === MenuOptions.BAR_GRAPH) {
-      return (
-        <BarGraph data={data} />
-      )
+      return <BarGraph data={data} />
     }
 
-    return (
-      <Table data={data} />
-    )
+    return <Table data={data} />
   }
 
   constructor (props) {
     super(props)
 
     this.state = initialState
+
+    this.onToggleInformationModalClick = this.onToggleInformationModalClick.bind(
+      this
+    )
   }
 
   componentWillMount () {
@@ -204,6 +240,7 @@ export class Home extends Component {
             {this.innerContent}
           </div>
         </div>
+        <div id='modal'>{this.informationModal}</div>
       </div>
     )
   }
@@ -219,7 +256,8 @@ const mapStateToProps = (state) => ({
   data: state.data.data,
   error: state.data.error,
   pending: state.data.pending,
-  translate: getTranslate(state.locale)
+  translate: getTranslate(state.locale),
+  activeLanguage: getActiveLanguage(state.locale)
 })
 
 const mapActionsToProps = {
@@ -230,7 +268,4 @@ const mapActionsToProps = {
   selectScenarioCollection
 }
 
-export default connect(
-  mapStateToProps,
-  mapActionsToProps
-)(Home)
+export default connect(mapStateToProps, mapActionsToProps)(Home)
