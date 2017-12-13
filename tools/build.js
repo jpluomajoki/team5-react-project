@@ -15,6 +15,6 @@ compiler.run((error) => {
 
   log.info('Compiled, copying public dir...')
 
-  fs.copySync(path.join(paths.srcPath, 'public'), path.join(paths.buildPath, 'public'))
+  fs.copySync(paths.srcPath, path.join(paths.buildPath, 'public'))
   log.info('All done.')
 })
