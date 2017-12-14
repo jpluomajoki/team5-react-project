@@ -270,27 +270,25 @@ class Sidebar extends Component {
               [?]
             </Button>
           </ControlLabel>
-          <FormControl
-            multiple
-            name={FormControlNames.INDICATORS}
-            componentClass='select'
-            inputRef={ref => (this._indicatorsInput = ref)}
-            onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}
-            value={this.props.selectedValues.indicators}>
-            {_.map(this.props.indicatorCategories, indicatorCategory => {
-              return [
-                <option
-                  disabled
-                  key={indicatorCategory.id}>
-                  ----{indicatorCategory.name}----
-                </option>,
-                _.map(indicatorCategory.indicators, indicator => {
+          {_.map(this.props.indicatorCategories, indicatorCategory => {
+            return [
+              indicatorCategory.name,
+              <FormControl
+                multiple
+                name={indicatorCategory.name}
+                componentClass='select'
+                inputRef={ref => (this._indicatorsInput = ref)}
+                onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}
+                value={this.props.selectedValues.indicators}>
+                {_.map(indicatorCategory.indicators, indicator => {
                   return (
                     <option value={indicator.id} key={indicator.id}>{indicator.name}</option>
                   )
-                })]
-            })}
-          </FormControl>
+                })}
+              </FormControl>
+            ]
+          })}
+
         </FormGroup>
         <FormGroup>
           <ControlLabel>
