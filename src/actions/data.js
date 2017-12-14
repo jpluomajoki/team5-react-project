@@ -26,3 +26,45 @@ export const fetchScenarioCollectionData = (scenarioCollectionId, regionId) => (
     }
   }
 })
+
+export const selectRegionLevel = (id) => ({
+  type: ActionTypes.SELECT_REGION_LEVEL,
+  payload: {
+    id
+  }
+})
+
+export const selectRegion = (id) => ({
+  type: ActionTypes.SELECT_REGION,
+  payload: {
+    id
+  }
+})
+
+export const selectScenarioCollection = (id) => ({
+  type: ActionTypes.SELECT_SCENARIO_COLLECTION,
+  payload: {
+    id
+  }
+})
+
+export const selectScenarios = (ids) => ({
+  type: ActionTypes.SELECT_SCENARIOS,
+  payload: {
+    ids
+  }
+})
+
+export const selectIndicators = (ids) => ({
+  type: ActionTypes.SELECT_INDICATORS,
+  payload: {
+    ids
+  }
+})
+
+export const selectPeriod = (id) => ({
+  type: ActionTypes.SELECT_PERIOD,
+  payload: {
+    id
+  }
+})
