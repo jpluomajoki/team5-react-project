@@ -57,11 +57,11 @@ export class Home extends Component {
     fetchRegionLevels: PropTypes.func.isRequired,
     fetchRegions: PropTypes.func.isRequired,
     fetchScenarioCollectionData: PropTypes.func.isRequired
-  };
+  }
 
   static defaultProps = {
     // Empty
-  };
+  }
 
   handleLanguageOptionClick = (language) => () => {
     this.props.setActiveLanguage(language)
@@ -75,59 +75,22 @@ export class Home extends Component {
 
   handlePrintClick = () => {
     window.print()
-  };
-
-  // Post sidebar value change
-  // Depending on the target a next action might be acquired
-  // 1. REGION_LEVEL value change         -> fetch regions
-  // 2. SCENARIO_COLLECTION value change  -> fetch scenario collection data
-  postSidebarValueChange = targetName => {
-    const { selectedValues } = this.state
-
-    switch (targetName) {
-      case FormControlNames.REGION_LEVEL: {
-        const regionLevelId = selectedValues[FormControlNames.REGION_LEVEL]
-        this.props.fetchRegions(regionLevelId)
-        break
-      }
-      case FormControlNames.SCENARIO_COLLECTION: {
-        const regionId = selectedValues[FormControlNames.REGION]
-        const collectionId =
-          selectedValues[FormControlNames.SCENARIO_COLLECTION]
-        this.props.fetchScenarioCollectionData(collectionId, regionId)
-      }
-    }
-  };
-
-  // Note: in order to use this event handler
-  // the target needs to have a name and value!
-  handleSidebarValueChange = event => {
-    let { selectedValues } = this.state
-    const targetName = event.target.name
-    const targetValue = event.target.value
-
-    selectedValues[targetName] = targetValue
-
-    this.setState({ selectedValues }, this.postSidebarValueChange(targetName))
-  };
+  }
 
   isValid = () => {
-    // const { selectedValues } = this.state
-
-    const selectedValues = this.props.selectedValues
+    const { selectedValues } = this.props
 
     if (
       selectedValues.scenarios.length === 0 ||
       selectedValues.indicators.length === 0 ||
-      selectedValues.timePeriod === ''
-    ) {
+      selectedValues.timePeriod === '') {
       return false
     }
 
     return true
-  };
+  }
 
-  onToggleInformationModalClick = event => {
+  onToggleInformationModalClick = (event) => {
     let { informationModal } = this.state
 
     if (event.target.name !== InformationHTML.CLOSE_INDICATOR) {
@@ -140,9 +103,11 @@ export class Home extends Component {
           break
       }
     }
+
     informationModal.showModal = !this.state.informationModal.showModal
+
     this.setState({ informationModal })
-  };
+  }
 
   get header () {
     return (
@@ -158,8 +123,7 @@ export class Home extends Component {
   get sidebar () {
     return (
       <Sidebar
-        onToggleInformationModalClick={this.onToggleInformationModalClick}
-      />
+        onToggleInformationModalClick={this.onToggleInformationModalClick} />
     )
   }
 
@@ -167,8 +131,7 @@ export class Home extends Component {
     return (
       <InformationModal
         informationModal={this.state.informationModal}
-        onToggleInformationModalClick={this.onToggleInformationModalClick}
-      />
+        onToggleInformationModalClick={this.onToggleInformationModalClick} />
     )
   }
 
@@ -177,9 +140,11 @@ export class Home extends Component {
   get innerContent () {
     const { graphOption } = this.state
     const { scenarios, indicators, timePeriod } = this.props.selectedValues
+
     if (!this.isValid()) {
       return null
     }
+
     let data
     if (graphOption === MenuOptions.SEPARATED_GRAPHS) {
       data = DataUtils.formatDataSeparatedGraphs({
@@ -216,10 +181,6 @@ export class Home extends Component {
     super(props)
 
     this.state = initialState
-
-    this.onToggleInformationModalClick = this.onToggleInformationModalClick.bind(
-      this
-    )
   }
 
   componentWillMount () {
@@ -268,4 +229,7 @@ const mapActionsToProps = {
   selectScenarioCollection
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(Home)
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(Home)
