@@ -1,5 +1,17 @@
 import _ from 'lodash'
 
+const filterAlreadyExistingIndicator = (indicators) => {
+  const newIndicatorsArray = []
+
+  _.forEach(indicators, indicator => {
+    if (!_.find(newIndicatorsArray, i => i.name === indicator.name)) {
+      newIndicatorsArray.push(indicator)
+    }
+  })
+
+  return newIndicatorsArray
+}
+
 export const formatDataSeparatedGraphs = ({ data, scenarioIds, indicatorsIds, timePeriodId }) => {
   const scenarios = _.filter(data.scenarios, scenario => scenarioIds.indexOf(scenario.id) !== -1)
   let indicators = []
@@ -7,6 +19,8 @@ export const formatDataSeparatedGraphs = ({ data, scenarioIds, indicatorsIds, ti
   _.forEach(data.indicatorCategories, category => {
     indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(indicator.id) !== -1))
   })
+
+  indicators = filterAlreadyExistingIndicator(indicators)
 
   _.forEach(scenarios, scenario => {
     scenario.indicators = []
@@ -51,6 +65,10 @@ export const formatDataCombinedGraph = ({ data, scenarioIds, indicatorsIds, time
   _.forEach(data.indicatorCategories, category => {
     indicators = _.concat(indicators, _.filter(category.indicators, indicator => indicatorsIds.indexOf(indicator.id) !== -1))
   })
+
+  indicators = filterAlreadyExistingIndicator(indicators)
+
+  console.log(indicators)
 
   indicators = _.map(indicators, indicator => ({
     id: indicator.id,

@@ -23,7 +23,7 @@ import {
 } from '../../actions/data'
 import * as FormControlNames from 'constants/FormControls'
 import * as queryStringUtils from 'utils/queryString'
-import * as InformationHTML from 'constants/InformationHTML';
+import * as InformationHTML from 'constants/InformationHTML'
 
 class Sidebar extends Component {
   static propTypes = {
