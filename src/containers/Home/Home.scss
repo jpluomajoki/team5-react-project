@@ -1,5 +1,11 @@
 @import 'base';
 
+:global {
+  .recharts-surface {
+    overflow: visible;
+  }
+}
+
 .component {
   // Empty
   height: 100%;
@@ -9,6 +15,7 @@
   display: flex;
   flex-flow: row;
   height: 100%;
+  overflow: scroll;
 }
 
 .innerContent {
@@ -17,6 +24,5 @@
   align-items: center;
   flex-grow: 4;
   padding-top: $space-l;
-
-  overflow: scroll;
+  min-width: 500px;
 }

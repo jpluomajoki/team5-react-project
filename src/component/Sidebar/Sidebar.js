@@ -23,7 +23,7 @@ import {
 } from '../../actions/data'
 import * as FormControlNames from 'constants/FormControls'
 import * as queryStringUtils from 'utils/queryString'
-import * as InformationHTML from 'constants/InformationHTML';
+import * as InformationHTML from 'constants/InformationHTML'
 
 class Sidebar extends Component {
   static propTypes = {
@@ -67,8 +67,6 @@ class Sidebar extends Component {
       case '_indicatorsInput':
         this.props.selectIndicators(_.map(fakeEvent.target.value, id => (parseInt(id))))
         break
-      default:
-        break
     }
   }
 
@@ -76,8 +74,7 @@ class Sidebar extends Component {
   get scenarioCollections () {
     if (
       !this.props.regions ||
-      !this.props.selectedValues[FormControlNames.REGION]
-    ) {
+      !this.props.selectedValues[FormControlNames.REGION]) {
       return null
     }
 
@@ -111,8 +108,6 @@ class Sidebar extends Component {
       language: 'fi'
     })
 
-    console.log(url)
-
     return (
       <a disabled href={`http://mela2.metla.fi/mela/tupa/index.php?${url}`} target='_blank'>
         Mela Tupa
@@ -121,24 +116,27 @@ class Sidebar extends Component {
   }
 
   componentWillReceiveProps (newProps) {
-    if (!newProps.pending) {
-      const oldSelectedValues = this.props.selectedValues
-      const newSelectedValues = newProps.selectedValues
-      if (oldSelectedValues.regionLevel !== newSelectedValues.regionLevel && newSelectedValues.regionLevel !== -1) {
-        this.props.fetchRegions(newSelectedValues.regionLevel)
-      }
-      if (newSelectedValues.scenarioCollection !== oldSelectedValues.scenarioCollection && newSelectedValues.scenarioCollection !== -1) {
-        this.props.fetchScenarioCollectionData(newSelectedValues.scenarioCollection, newSelectedValues.region)
-      }
+    if (newProps.pending) {
+      return
+    }
+
+    const oldSelectedValues = this.props.selectedValues
+    const newSelectedValues = newProps.selectedValues
+
+    if (oldSelectedValues.regionLevel !== newSelectedValues.regionLevel && newSelectedValues.regionLevel !== -1) {
+      this.props.fetchRegions(newSelectedValues.regionLevel)
+    }
+
+    if (newSelectedValues.scenarioCollection !== oldSelectedValues.scenarioCollection && newSelectedValues.scenarioCollection !== -1) {
+      this.props.fetchScenarioCollectionData(newSelectedValues.scenarioCollection, newSelectedValues.region)
     }
   }
 
   render () {
-    const translate = this.props.translate
-    const scenarioCollections = this.props.regions.length === 0
+    const { translate, onToggleInformationModalClick, regions, selectedValues } = this.props
+    const scenarioCollections = regions.length === 0
       ? []
-      : this.props.regions.find(region => region.id === this.props.selectedValues.region).scenarioCollections
-    const onToggleInformationModalClick = this.props.onToggleInformationModalClick
+      : regions.find(region => region.id === selectedValues.region).scenarioCollections
 
     return (
       <div className={styles.component}>
@@ -148,21 +146,18 @@ class Sidebar extends Component {
             <Button
               bsStyle='link'
               name={InformationHTML.REGIONLEVEL_INDICATOR}
-              onClick={onToggleInformationModalClick}
-            >
+              onClick={onToggleInformationModalClick}>
               [?]
             </Button>
           </ControlLabel>
           <FormControl
             name={FormControlNames.REGION_LEVEL}
             componentClass='select'
-            onChange={(e) => {
-              this.props.selectRegionLevel(parseInt(e.target.value))
-            }}
+            onChange={(e) => this.props.selectRegionLevel(parseInt(e.target.value))}
             value={this.props.selectedValues.regionLevel}>
             {_.map(this.props.regionLevels, (regionLevel) => {
               return (
-                <option key={regionLevel.id} value={regionLevel.id}>
+                <option key={regionLevel.id} value={regionLevel.id} title={regionLevel.description}>
                   {regionLevel.name}
                 </option>
               )
@@ -175,21 +170,18 @@ class Sidebar extends Component {
             <Button
               bsStyle='link'
               name={InformationHTML.REGION_INDICATOR}
-              onClick={onToggleInformationModalClick}
-            >
+              onClick={onToggleInformationModalClick}>
               [?]
             </Button>
           </ControlLabel>
           <FormControl
             name={FormControlNames.REGION}
             componentClass='select'
-            onChange={(e) => {
-              this.props.selectRegion(parseInt(e.target.value))
-            }}
+            onChange={(e) => this.props.selectRegion(parseInt(e.target.value))}
             value={this.props.selectedValues.region}>
             {_.map(this.props.regions, (region) => {
               return (
-                <option key={region.id} value={region.id}>
+                <option key={region.id} value={region.id} title={region.description}>
                   {region.name}
                 </option>
               )
@@ -202,21 +194,18 @@ class Sidebar extends Component {
             <Button
               bsStyle='link'
               name={InformationHTML.SCENARIOCOLLECTION_INDICATOR}
-              onClick={onToggleInformationModalClick}
-            >
+              onClick={onToggleInformationModalClick}>
               [?]
             </Button>
           </ControlLabel>
           <FormControl
             name={FormControlNames.SCENARIO_COLLECTION}
             componentClass='select'
-            onChange={(e) => {
-              this.props.selectScenarioCollection(parseInt(e.target.value))
-            }}
+            onChange={(e) => this.props.selectScenarioCollection(parseInt(e.target.value))}
             value={this.props.selectedValues.scenarioCollection}>
             {_.map(scenarioCollections, (collection) => {
               return (
-                <option key={collection.id} value={collection.id}>
+                <option key={collection.id} value={collection.id} title={collection.description}>
                   {collection.name}
                 </option>
               )
@@ -229,8 +218,7 @@ class Sidebar extends Component {
             <Button
               bsStyle='link'
               name={InformationHTML.SCENARIOS_INDICATOR}
-              onClick={onToggleInformationModalClick}
-            >
+              onClick={onToggleInformationModalClick}>
               [?]
             </Button>
           </ControlLabel>
@@ -239,12 +227,11 @@ class Sidebar extends Component {
             name='scenarios'
             componentClass='select'
             inputRef={ref => (this._scenariosInput = ref)}
-            onChange={this.handleMultipleSelectValueChange('_scenariosInput')}
             value={this.props.selectedValues.scenarios}
-          >
+            onChange={this.handleMultipleSelectValueChange('_scenariosInput')}>
             {_.map(this.props.scenarios, (scenario) => {
               return (
-                <option key={scenario.id} value={scenario.id}>
+                <option key={scenario.id} value={scenario.id} title={scenario.description}>
                   {scenario.name}
                 </option>
               )
@@ -257,8 +244,7 @@ class Sidebar extends Component {
             <Button
               bsStyle='link'
               name={InformationHTML.INDICATORS_INDICATOR}
-              onClick={onToggleInformationModalClick}
-            >
+              onClick={onToggleInformationModalClick}>
               [?]
             </Button>
           </ControlLabel>
@@ -278,7 +264,9 @@ class Sidebar extends Component {
                 </option>,
                 _.map(indicatorCategory.indicators, indicator => {
                   return (
-                    <option value={indicator.id} key={indicator.id}>{indicator.name}</option>
+                    <option value={indicator.id} key={indicator.id} title={indicator.description}>
+                      {indicator.name}
+                    </option>
                   )
                 })]
             })}
@@ -290,26 +278,22 @@ class Sidebar extends Component {
             <Button
               bsStyle='link'
               name={InformationHTML.TIMEPERIOD_INDICATOR}
-              onClick={onToggleInformationModalClick}
-            >
+              onClick={onToggleInformationModalClick}>
               [?]
             </Button>
           </ControlLabel>
           <FormControl
             name={FormControlNames.TIME_PERIOD}
             componentClass='select'
-            onChange={(e) => {
-              this.props.selectPeriod(parseInt(e.target.value))
-            }}
+            onChange={(e) => this.props.selectPeriod(parseInt(e.target.value))}
             value={this.props.selectedValues.timePeriod} >
             {_.map(this.props.timePeriods, (period) => {
               return (
-                <option key={period.id} value={period.id}>
+                <option key={period.id} value={period.id} title={period.description}>
                   {`${period.yearStart}-${period.yearEnd}`}
                 </option>
               )
-            })
-            }
+            })}
           </FormControl>
         </FormGroup>
         {this.melaTupaLink}
@@ -340,4 +324,7 @@ const mapDispatchToProps = {
   selectPeriod
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(Sidebar)
+export default connect(
+  mapStateToProps,
+  mapDispatchToProps
+)(Sidebar)

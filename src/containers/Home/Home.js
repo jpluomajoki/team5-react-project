@@ -26,15 +26,7 @@ import Table from 'component/Table'
 import InformationModal from 'component/InformationModal'
 
 const initialState = {
-  graphOption: MenuOptions.RADAR_GRAPH,
-  selectedValues: {
-    [FormControlNames.REGION_LEVEL]: '',
-    [FormControlNames.REGION]: '',
-    [FormControlNames.SCENARIO_COLLECTION]: '',
-    [FormControlNames.SCENARIOS]: [],
-    [FormControlNames.INDICATORS]: [],
-    [FormControlNames.TIME_PERIOD]: ''
-  },
+  graphOption: MenuOptions.BAR_GRAPH,
   informationModal: {
     showModal: false,
     data: InformationHTML.DEFAULT_INFORMATION
@@ -57,11 +49,11 @@ export class Home extends Component {
     fetchRegionLevels: PropTypes.func.isRequired,
     fetchRegions: PropTypes.func.isRequired,
     fetchScenarioCollectionData: PropTypes.func.isRequired
-  };
+  }
 
   static defaultProps = {
     // Empty
-  };
+  }
 
   handleLanguageOptionClick = (language) => () => {
     this.props.setActiveLanguage(language)
@@ -75,59 +67,22 @@ export class Home extends Component {
 
   handlePrintClick = () => {
     window.print()
-  };
-
-  // Post sidebar value change
-  // Depending on the target a next action might be acquired
-  // 1. REGION_LEVEL value change         -> fetch regions
-  // 2. SCENARIO_COLLECTION value change  -> fetch scenario collection data
-  postSidebarValueChange = targetName => {
-    const { selectedValues } = this.state
-
-    switch (targetName) {
-      case FormControlNames.REGION_LEVEL: {
-        const regionLevelId = selectedValues[FormControlNames.REGION_LEVEL]
-        this.props.fetchRegions(regionLevelId)
-        break
-      }
-      case FormControlNames.SCENARIO_COLLECTION: {
-        const regionId = selectedValues[FormControlNames.REGION]
-        const collectionId =
-          selectedValues[FormControlNames.SCENARIO_COLLECTION]
-        this.props.fetchScenarioCollectionData(collectionId, regionId)
-      }
-    }
-  };
-
-  // Note: in order to use this event handler
-  // the target needs to have a name and value!
-  handleSidebarValueChange = event => {
-    let { selectedValues } = this.state
-    const targetName = event.target.name
-    const targetValue = event.target.value
-
-    selectedValues[targetName] = targetValue
-
-    this.setState({ selectedValues }, this.postSidebarValueChange(targetName))
-  };
+  }
 
   isValid = () => {
-    // const { selectedValues } = this.state
-
-    const selectedValues = this.props.selectedValues
+    const { selectedValues } = this.props
 
     if (
       selectedValues.scenarios.length === 0 ||
       selectedValues.indicators.length === 0 ||
-      selectedValues.timePeriod === ''
-    ) {
+      selectedValues.timePeriod === '') {
       return false
     }
 
     return true
-  };
+  }
 
-  onToggleInformationModalClick = event => {
+  onToggleInformationModalClick = (event) => {
     let { informationModal } = this.state
 
     if (event.target.name !== InformationHTML.CLOSE_INDICATOR) {
@@ -140,9 +95,11 @@ export class Home extends Component {
           break
       }
     }
+
     informationModal.showModal = !this.state.informationModal.showModal
+
     this.setState({ informationModal })
-  };
+  }
 
   get header () {
     return (
@@ -158,17 +115,17 @@ export class Home extends Component {
   get sidebar () {
     return (
       <Sidebar
-        onToggleInformationModalClick={this.onToggleInformationModalClick}
-      />
+        onToggleInformationModalClick={this.onToggleInformationModalClick} />
     )
   }
 
   get informationModal () {
     return (
-      <InformationModal
-        informationModal={this.state.informationModal}
-        onToggleInformationModalClick={this.onToggleInformationModalClick}
-      />
+      <div id='modal'>
+        <InformationModal
+          informationModal={this.state.informationModal}
+          onToggleInformationModalClick={this.onToggleInformationModalClick} />
+      </div>
     )
   }
 
@@ -177,9 +134,11 @@ export class Home extends Component {
   get innerContent () {
     const { graphOption } = this.state
     const { scenarios, indicators, timePeriod } = this.props.selectedValues
+
     if (!this.isValid()) {
       return null
     }
+
     let data
     if (graphOption === MenuOptions.SEPARATED_GRAPHS) {
       data = DataUtils.formatDataSeparatedGraphs({
@@ -212,14 +171,17 @@ export class Home extends Component {
     return <Table data={data} />
   }
 
+  get moreIdealGraphIndicator () {
+    return this.props.selectedValues.indicators.length < 3 &&
+    (this.state.graphOption === MenuOptions.RADAR_GRAPH || this.state.graphOption === MenuOptions.SEPARATED_GRAPHS)
+      ? (<p>Be aware that this kind of graph is ideal using more indicators</p>)
+      : null
+  }
+
   constructor (props) {
     super(props)
 
     this.state = initialState
-
-    this.onToggleInformationModalClick = this.onToggleInformationModalClick.bind(
-      this
-    )
   }
 
   componentWillMount () {
@@ -237,10 +199,11 @@ export class Home extends Component {
         <div className={styles.content}>
           {this.sidebar}
           <div id='section-to-print' className={styles.innerContent}>
+            {this.moreIdealGraphIndicator}
             {this.innerContent}
           </div>
         </div>
-        <div id='modal'>{this.informationModal}</div>
+        {this.informationModal}
       </div>
     )
   }
@@ -248,7 +211,6 @@ export class Home extends Component {
 
 const mapStateToProps = (state) => ({
   selectedValues: state.data.selectedValues,
-  regionLevels: state.data.regionLevels,
   regions: state.data.regions,
   scenarios: state.data.scenarios,
   indicatorCategories: state.data.indicatorCategories,
@@ -268,4 +230,7 @@ const mapActionsToProps = {
   selectScenarioCollection
 }
 
-export default connect(mapStateToProps, mapActionsToProps)(Home)
+export default connect(
+  mapStateToProps,
+  mapActionsToProps
+)(Home)
