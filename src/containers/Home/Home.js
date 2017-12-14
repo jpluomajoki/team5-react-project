@@ -27,14 +27,6 @@ import InformationModal from 'component/InformationModal'
 
 const initialState = {
   graphOption: MenuOptions.BAR_GRAPH,
-  selectedValues: {
-    [FormControlNames.REGION_LEVEL]: '',
-    [FormControlNames.REGION]: '',
-    [FormControlNames.SCENARIO_COLLECTION]: '',
-    [FormControlNames.SCENARIOS]: [],
-    [FormControlNames.INDICATORS]: [],
-    [FormControlNames.TIME_PERIOD]: ''
-  },
   informationModal: {
     showModal: false,
     data: InformationHTML.DEFAULT_INFORMATION
@@ -180,9 +172,7 @@ export class Home extends Component {
   }
 
   get moreIdealGraphIndicator () {
-    console.log(this.props.selectedValues)
-
-    return this.state.selectedValues.indicators.length < 3 &&
+    return this.props.selectedValues.indicators.length < 3 &&
     (this.state.graphOption === MenuOptions.RADAR_GRAPH || this.state.graphOption === MenuOptions.SEPARATED_GRAPHS)
       ? (<p>Be aware that this kind of graph is ideal using more indicators</p>)
       : null
@@ -221,7 +211,6 @@ export class Home extends Component {
 
 const mapStateToProps = (state) => ({
   selectedValues: state.data.selectedValues,
-  regionLevels: state.data.regionLevels,
   regions: state.data.regions,
   scenarios: state.data.scenarios,
   indicatorCategories: state.data.indicatorCategories,
