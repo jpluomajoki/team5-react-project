@@ -108,8 +108,6 @@ class Sidebar extends Component {
       language: 'fi'
     })
 
-    console.log(url)
-
     return (
       <a disabled href={`http://mela2.metla.fi/mela/tupa/index.php?${url}`} target='_blank'>
         Mela Tupa
@@ -155,7 +153,8 @@ class Sidebar extends Component {
           <FormControl
             name={FormControlNames.REGION_LEVEL}
             componentClass='select'
-            onChange={(e) => this.props.selectRegionLevel(parseInt(e.target.value))}>
+            onChange={(e) => this.props.selectRegionLevel(parseInt(e.target.value))}
+            value={this.props.selectedValues.regionLevel}>
             {_.map(this.props.regionLevels, (regionLevel) => {
               return (
                 <option key={regionLevel.id} value={regionLevel.id} title={regionLevel.description}>
@@ -178,7 +177,8 @@ class Sidebar extends Component {
           <FormControl
             name={FormControlNames.REGION}
             componentClass='select'
-            onChange={(e) => this.props.selectRegion(parseInt(e.target.value))}>
+            onChange={(e) => this.props.selectRegion(parseInt(e.target.value))}
+            value={this.props.selectedValues.region}>
             {_.map(this.props.regions, (region) => {
               return (
                 <option key={region.id} value={region.id} title={region.description}>
@@ -201,7 +201,8 @@ class Sidebar extends Component {
           <FormControl
             name={FormControlNames.SCENARIO_COLLECTION}
             componentClass='select'
-            onChange={(e) => this.props.selectScenarioCollection(parseInt(e.target.value))}>
+            onChange={(e) => this.props.selectScenarioCollection(parseInt(e.target.value))}
+            value={this.props.selectedValues.scenarioCollection}>
             {_.map(scenarioCollections, (collection) => {
               return (
                 <option key={collection.id} value={collection.id} title={collection.description}>
@@ -226,6 +227,7 @@ class Sidebar extends Component {
             name='scenarios'
             componentClass='select'
             inputRef={ref => (this._scenariosInput = ref)}
+            value={this.props.selectedValues.scenarios}
             onChange={this.handleMultipleSelectValueChange('_scenariosInput')}>
             {_.map(this.props.scenarios, (scenario) => {
               return (
@@ -251,7 +253,8 @@ class Sidebar extends Component {
             name={FormControlNames.INDICATORS}
             componentClass='select'
             inputRef={ref => (this._indicatorsInput = ref)}
-            onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}>
+            onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}
+            value={this.props.selectedValues.indicators}>
             {_.map(this.props.indicatorCategories, indicatorCategory => {
               return [
                 <option
@@ -282,7 +285,8 @@ class Sidebar extends Component {
           <FormControl
             name={FormControlNames.TIME_PERIOD}
             componentClass='select'
-            onChange={(e) => this.props.selectPeriod(parseInt(e.target.value))}>
+            onChange={(e) => this.props.selectPeriod(parseInt(e.target.value))}
+            value={this.props.selectedValues.timePeriod} >
             {_.map(this.props.timePeriods, (period) => {
               return (
                 <option key={period.id} value={period.id} title={period.description}>
