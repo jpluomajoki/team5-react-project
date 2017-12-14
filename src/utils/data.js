@@ -68,8 +68,6 @@ export const formatDataCombinedGraph = ({ data, scenarioIds, indicatorsIds, time
 
   indicators = filterAlreadyExistingIndicator(indicators)
 
-  console.log(indicators)
-
   indicators = _.map(indicators, indicator => ({
     id: indicator.id,
     name: indicator.name,

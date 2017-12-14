@@ -129,9 +129,11 @@ export class Home extends Component {
 
   get informationModal () {
     return (
-      <InformationModal
-        informationModal={this.state.informationModal}
-        onToggleInformationModalClick={this.onToggleInformationModalClick} />
+      <div id='modal'>
+        <InformationModal
+          informationModal={this.state.informationModal}
+          onToggleInformationModalClick={this.onToggleInformationModalClick} />
+      </div>
     )
   }
 
@@ -177,6 +179,15 @@ export class Home extends Component {
     return <Table data={data} />
   }
 
+  get moreIdealGraphIndicator () {
+    console.log(this.props.selectedValues)
+
+    return this.state.selectedValues.indicators.length < 3 &&
+    (this.state.graphOption === MenuOptions.RADAR_GRAPH || this.state.graphOption === MenuOptions.SEPARATED_GRAPHS)
+      ? (<p>Be aware that this kind of graph is ideal using more indicators</p>)
+      : null
+  }
+
   constructor (props) {
     super(props)
 
@@ -198,10 +209,11 @@ export class Home extends Component {
         <div className={styles.content}>
           {this.sidebar}
           <div id='section-to-print' className={styles.innerContent}>
+            {this.moreIdealGraphIndicator}
             {this.innerContent}
           </div>
         </div>
-        <div id='modal'>{this.informationModal}</div>
+        {this.informationModal}
       </div>
     )
   }
