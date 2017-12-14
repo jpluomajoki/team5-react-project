@@ -23,7 +23,7 @@ import {
 } from '../../actions/data'
 import * as FormControlNames from 'constants/FormControls'
 import * as queryStringUtils from 'utils/queryString'
-import * as InformationHTML from 'constants/InformationHTML';
+import * as InformationHTML from 'constants/InformationHTML'
 
 class Sidebar extends Component {
   static propTypes = {
@@ -34,7 +34,15 @@ class Sidebar extends Component {
     timePeriods: PropTypes.array.isRequired,
     translate: PropTypes.func.isRequired,
     selectedValues: PropTypes.object.isRequired,
-    onToggleInformationModalClick: PropTypes.func.isRequired
+    onToggleInformationModalClick: PropTypes.func.isRequired,
+    selectRegionLevel: PropTypes.func.isRequired,
+    selectRegion: PropTypes.func.isRequired,
+    selectScenarioCollection: PropTypes.func.isRequired,
+    selectScenarios: PropTypes.func.isRequired,
+    selectIndicators: PropTypes.func.isRequired,
+    selectPeriod: PropTypes.func.isRequired,
+    fetchRegions: PropTypes.func.isRequired,
+    fetchScenarioCollectionData: PropTypes.func.isRequired
   }
 
   static defaultProps = {
