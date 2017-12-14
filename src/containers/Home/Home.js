@@ -26,7 +26,7 @@ import Table from 'component/Table'
 import InformationModal from 'component/InformationModal'
 
 const initialState = {
-  graphOption: MenuOptions.RADAR_GRAPH,
+  graphOption: MenuOptions.BAR_GRAPH,
   selectedValues: {
     [FormControlNames.REGION_LEVEL]: '',
     [FormControlNames.REGION]: '',

@@ -1,5 +1,11 @@
 @import 'base';
 
+:global {
+  .recharts-surface {
+    overflow: visible;
+  }
+}
+
 .component {
   // Empty
   height: 100%;
