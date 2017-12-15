@@ -40,7 +40,8 @@ class Sidebar extends Component {
     fetchRegions: PropTypes.func.isRequired,
     selectRegion: PropTypes.func.isRequired,
     selectScenarioCollection: PropTypes.func.isRequired,
-    selectPeriod: PropTypes.func.isRequired
+    selectPeriod: PropTypes.func.isRequired,
+    fetchScenarioCollectionData: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -48,7 +49,7 @@ class Sidebar extends Component {
   };
 
   _scenariosInput = null;
-  _indicatorsInput = null;
+  _indicatorsInput = [];
 
   // Note: In order to get all the values from a multiple select when the value changes
   // we need to handle this a bit differently.
@@ -73,6 +74,27 @@ class Sidebar extends Component {
       case '_indicatorsInput':
         this.props.selectIndicators(_.map(fakeEvent.target.value, id => (parseInt(id))))
         break
+    }
+  }
+
+  handleIndicatorSelection = (name, isMandatory) => event => {
+    const values = []
+    // Refs to the selection elements are stored in _indicatorsInput
+    // first map returns an array, in which are all the selected items in one category
+    // Each of those is an object, push the value of the object in an values array.
+    this._indicatorsInput.map(input => input.selectedOptions).forEach((category) => {
+      for (const option of category) {
+        values.push(parseInt(option.value))
+      }
+    })
+
+    // In here we make sure that we leave at least one item in each mandatory category selected.
+    if (isMandatory) {
+      if (this._indicatorsInput.find(a => a.name === name).selectedOptions.length > 0) {
+        this.props.selectIndicators(values)
+      }
+    } else {
+      this.props.selectIndicators(values)
     }
   }
 
@@ -248,29 +270,30 @@ class Sidebar extends Component {
               [?]
             </Button>
           </ControlLabel>
-          <FormControl
-            multiple
-            name={FormControlNames.INDICATORS}
-            componentClass='select'
-            inputRef={ref => (this._indicatorsInput = ref)}
-            onChange={this.handleMultipleSelectValueChange('_indicatorsInput')}
-            value={this.props.selectedValues.indicators}>
-            {_.map(this.props.indicatorCategories, indicatorCategory => {
-              return [
-                <option
-                  disabled
-                  key={indicatorCategory.id}>
-                  ----{indicatorCategory.name}----
-                </option>,
-                _.map(indicatorCategory.indicators, indicator => {
-                  return (
-                    <option value={indicator.id} key={indicator.id} title={indicator.description}>
-                      {indicator.name}
-                    </option>
-                  )
-                })]
-            })}
-          </FormControl>
+          {_.map(this.props.indicatorCategories, indicatorCategory => {
+            return [
+              indicatorCategory.isMandatory !== 0 ? indicatorCategory.name + ' *' : indicatorCategory.name,
+              <FormControl
+                multiple
+                name={indicatorCategory.name}
+                componentClass='select'
+                inputRef={ref => {
+                  if (this._indicatorsInput.indexOf(ref) === -1 && ref !== null) {
+                    this._indicatorsInput.push(ref)
+                  }
+                }}
+                onChange={this.handleIndicatorSelection(indicatorCategory.name, indicatorCategory.isMandatory)}
+                value={this.props.selectedValues.indicators}>
+                {
+                  _.map(indicatorCategory.indicators, indicator => {
+                    return (
+                      <option value={indicator.id} key={indicator.id}>{indicator.name}</option>
+                    )
+                  })
+                }
+              </FormControl>
+            ]
+          })}
         </FormGroup>
         <FormGroup>
           <ControlLabel>
@@ -291,7 +314,7 @@ class Sidebar extends Component {
           </FormControl>
         </FormGroup>
         {this.melaTupaLink}
-      </div>
+      </div >
     )
   }
 }
