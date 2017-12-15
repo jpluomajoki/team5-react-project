@@ -23,7 +23,6 @@ import {
 } from '../../actions/data'
 import * as FormControlNames from 'constants/FormControls'
 import * as queryStringUtils from 'utils/queryString'
-import * as InformationHTML from 'constants/InformationHTML'
 
 class Sidebar extends Component {
   static propTypes = {
@@ -34,7 +33,14 @@ class Sidebar extends Component {
     timePeriods: PropTypes.array.isRequired,
     translate: PropTypes.func.isRequired,
     selectedValues: PropTypes.object.isRequired,
-    onToggleInformationModalClick: PropTypes.func.isRequired
+    onToggleAccordionModalClick: PropTypes.func.isRequired,
+    selectScenarios: PropTypes.func.isRequired,
+    selectIndicators: PropTypes.func.isRequired,
+    selectRegionLevel: PropTypes.func.isRequired,
+    fetchRegions: PropTypes.func.isRequired,
+    selectRegion: PropTypes.func.isRequired,
+    selectScenarioCollection: PropTypes.func.isRequired,
+    selectPeriod: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -133,7 +139,7 @@ class Sidebar extends Component {
   }
 
   render () {
-    const { translate, onToggleInformationModalClick, regions, selectedValues } = this.props
+    const { translate, onToggleAccordionModalClick, regions, selectedValues } = this.props
     const scenarioCollections = regions.length === 0
       ? []
       : regions.find(region => region.id === selectedValues.region).scenarioCollections
@@ -145,8 +151,8 @@ class Sidebar extends Component {
             {translate('region level')}
             <Button
               bsStyle='link'
-              name={InformationHTML.REGIONLEVEL_INDICATOR}
-              onClick={onToggleInformationModalClick}>
+              name={FormControlNames.REGION_LEVEL}
+              onClick={onToggleAccordionModalClick}>
               [?]
             </Button>
           </ControlLabel>
@@ -167,12 +173,6 @@ class Sidebar extends Component {
         <FormGroup>
           <ControlLabel>
             {translate('region')}
-            <Button
-              bsStyle='link'
-              name={InformationHTML.REGION_INDICATOR}
-              onClick={onToggleInformationModalClick}>
-              [?]
-            </Button>
           </ControlLabel>
           <FormControl
             name={FormControlNames.REGION}
@@ -193,8 +193,8 @@ class Sidebar extends Component {
             {translate('scenario collection')}
             <Button
               bsStyle='link'
-              name={InformationHTML.SCENARIOCOLLECTION_INDICATOR}
-              onClick={onToggleInformationModalClick}>
+              name={FormControlNames.SCENARIO_COLLECTION}
+              onClick={onToggleAccordionModalClick}>
               [?]
             </Button>
           </ControlLabel>
@@ -217,8 +217,8 @@ class Sidebar extends Component {
             {translate('scenario')}
             <Button
               bsStyle='link'
-              name={InformationHTML.SCENARIOS_INDICATOR}
-              onClick={onToggleInformationModalClick}>
+              name={FormControlNames.SCENARIOS}
+              onClick={onToggleAccordionModalClick}>
               [?]
             </Button>
           </ControlLabel>
@@ -243,8 +243,8 @@ class Sidebar extends Component {
             {translate('indicators')}
             <Button
               bsStyle='link'
-              name={InformationHTML.INDICATORS_INDICATOR}
-              onClick={onToggleInformationModalClick}>
+              name={FormControlNames.INDICATORS}
+              onClick={onToggleAccordionModalClick}>
               [?]
             </Button>
           </ControlLabel>
@@ -275,12 +275,6 @@ class Sidebar extends Component {
         <FormGroup>
           <ControlLabel>
             {translate('time period')}
-            <Button
-              bsStyle='link'
-              name={InformationHTML.TIMEPERIOD_INDICATOR}
-              onClick={onToggleInformationModalClick}>
-              [?]
-            </Button>
           </ControlLabel>
           <FormControl
             name={FormControlNames.TIME_PERIOD}
