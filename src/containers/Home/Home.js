@@ -24,12 +24,19 @@ import RadarGraph from 'component/RadarGraph'
 import BarGraph from 'component/BarGraph'
 import Table from 'component/Table'
 import InformationModal from 'component/InformationModal'
+import AccordionModal from 'component/AccordionModal'
 
 const initialState = {
   graphOption: MenuOptions.BAR_GRAPH,
   informationModal: {
     showModal: false,
     data: InformationHTML.DEFAULT_INFORMATION
+  },
+  accordionModal: {
+    showModal: false,
+    hasGroups: false,
+    title: '',
+    data: {}
   }
 }
 
@@ -39,16 +46,13 @@ export class Home extends Component {
     regions: PropTypes.array.isRequired,
     scenarios: PropTypes.array.isRequired,
     indicatorCategories: PropTypes.array.isRequired,
-    timePeriods: PropTypes.array.isRequired,
     data: PropTypes.object.isRequired,
-    error: PropTypes.object,
-    pending: PropTypes.bool.isRequired,
     translate: PropTypes.func.isRequired,
+    selectedValues: PropTypes.object.isRequired,
 
+    activeLanguage: PropTypes.object.isRequired,
     setActiveLanguage: PropTypes.func.isRequired,
-    fetchRegionLevels: PropTypes.func.isRequired,
-    fetchRegions: PropTypes.func.isRequired,
-    fetchScenarioCollectionData: PropTypes.func.isRequired
+    fetchRegionLevels: PropTypes.func.isRequired
   }
 
   static defaultProps = {
@@ -82,23 +86,79 @@ export class Home extends Component {
     return true
   }
 
+  onCloseInformationModalClick = () => {
+    let { informationModal } = this.state
+    informationModal.showModal = false
+    this.setState({ informationModal })
+  }
+
+  onCloseAccordionModalClick = () => {
+    let { accordionModal } = this.state
+    accordionModal.showModal = false
+    this.setState({ accordionModal })
+  }
+
   onToggleInformationModalClick = (event) => {
     let { informationModal } = this.state
 
-    if (event.target.name !== InformationHTML.CLOSE_INDICATOR) {
-      switch (this.props.activeLanguage.code) {
-        case ('en'):
-          informationModal.data = InformationHTML.INFORMATION_EN[event.target.name]
-          break
-        case ('fi'):
-          informationModal.data = InformationHTML.INFORMATION_FI[event.target.name]
-          break
-      }
+    switch (this.props.activeLanguage.code) {
+      case ('en'):
+        informationModal.data = InformationHTML.INFORMATION_EN[event.target.name]
+        break
+      case ('fi'):
+        informationModal.data = InformationHTML.INFORMATION_FI[event.target.name]
+        break
     }
 
     informationModal.showModal = !this.state.informationModal.showModal
 
     this.setState({ informationModal })
+  }
+
+  onToggleAccordionModalClick = (event) => {
+    const { regionLevels, scenarios, indicatorCategories, translate } = this.props
+    let { accordionModal } = this.state
+
+    switch (event.target.name) {
+      case (FormControlNames.REGION_LEVEL):
+        accordionModal.data = regionLevels
+        accordionModal.title = translate('region level')
+        accordionModal.hasGroups = false
+        break
+      case (FormControlNames.SCENARIO_COLLECTION):
+        accordionModal.data = this.scenarioCollections
+        accordionModal.title = translate('scenario collection')
+        accordionModal.hasGroups = false
+        break
+      case (FormControlNames.SCENARIOS):
+        accordionModal.data = scenarios
+        accordionModal.title = translate('scenario')
+        accordionModal.hasGroups = false
+        break
+      case (FormControlNames.INDICATORS):
+        accordionModal.data = indicatorCategories
+        accordionModal.title = translate('indicators')
+        accordionModal.hasGroups = true
+        break
+    }
+    accordionModal.showModal = !this.state.accordionModal.showModal
+
+    this.setState({ accordionModal })
+  }
+
+  // Get scenario collections from chosen region
+  get scenarioCollections () {
+    if (
+      !this.props.regions ||
+      !this.props.selectedValues[FormControlNames.REGION]) {
+      return null
+    }
+
+    let chosenRegion = _.find(
+      this.props.regions,
+      r => (r.id) === this.props.selectedValues[FormControlNames.REGION]
+    )
+    return chosenRegion ? chosenRegion.scenarioCollections : null
   }
 
   get header () {
@@ -108,24 +168,33 @@ export class Home extends Component {
         onMenuGraphItemClickHandler={this.handleMenuGraphOptionClick}
         onPrintClickHandler={this.handlePrintClick}
         translate={this.props.translate}
-        onToggleInformationModalClick={this.onToggleInformationModalClick} />
+        onToggleInformationModalClick={this.onToggleInformationModalClick}
+        onCloseInformationModalClick={this.onCloseInformationModalClick} />
     )
   }
 
   get sidebar () {
     return (
       <Sidebar
-        onToggleInformationModalClick={this.onToggleInformationModalClick} />
+        onToggleAccordionModalClick={this.onToggleAccordionModalClick} />
     )
   }
 
   get informationModal () {
     return (
-      <div id='modal'>
-        <InformationModal
-          informationModal={this.state.informationModal}
-          onToggleInformationModalClick={this.onToggleInformationModalClick} />
-      </div>
+      <InformationModal
+        informationModal={this.state.informationModal}
+        onToggleInformationModalClick={this.onToggleInformationModalClick}
+        onCloseInformationModalClick={this.onCloseInformationModalClick} />
+    )
+  }
+
+  get accordionModal () {
+    return (
+      <AccordionModal
+        accordionModal={this.state.accordionModal}
+        onToggleAccordionModalClick={this.onToggleAccordionModalClick}
+        onCloseAccordionModalClick={this.onCloseAccordionModalClick} />
     )
   }
 
@@ -173,7 +242,7 @@ export class Home extends Component {
 
   get moreIdealGraphIndicator () {
     return this.props.selectedValues.indicators.length < 3 &&
-    (this.state.graphOption === MenuOptions.RADAR_GRAPH || this.state.graphOption === MenuOptions.SEPARATED_GRAPHS)
+      (this.state.graphOption === MenuOptions.RADAR_GRAPH || this.state.graphOption === MenuOptions.SEPARATED_GRAPHS)
       ? (<p>Be aware that this kind of graph is ideal using more indicators</p>)
       : null
   }
@@ -204,6 +273,7 @@ export class Home extends Component {
           </div>
         </div>
         {this.informationModal}
+        {this.accordionModal}
       </div>
     )
   }
@@ -211,13 +281,12 @@ export class Home extends Component {
 
 const mapStateToProps = (state) => ({
   selectedValues: state.data.selectedValues,
+  regionLevels: state.data.regionLevels,
   regions: state.data.regions,
   scenarios: state.data.scenarios,
   indicatorCategories: state.data.indicatorCategories,
   timePeriods: state.data.timePeriods,
   data: state.data.data,
-  error: state.data.error,
-  pending: state.data.pending,
   translate: getTranslate(state.locale),
   activeLanguage: getActiveLanguage(state.locale)
 })
