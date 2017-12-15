@@ -9,7 +9,7 @@ import {
   Button
 } from 'react-bootstrap'
 import { connect } from 'react-redux'
-import { getTranslate } from 'react-localize-redux'
+import { getTranslate, getActiveLanguage } from 'react-localize-redux'
 import {
   fetchRegionLevels,
   fetchRegions,
@@ -31,6 +31,7 @@ class Sidebar extends Component {
     scenarios: PropTypes.array.isRequired,
     indicatorCategories: PropTypes.array.isRequired,
     timePeriods: PropTypes.array.isRequired,
+    currentLanguage: PropTypes.string.isRequired,
     translate: PropTypes.func.isRequired,
     selectedValues: PropTypes.object.isRequired,
     onToggleAccordionModalClick: PropTypes.func.isRequired,
@@ -153,6 +154,11 @@ class Sidebar extends Component {
 
     if (oldSelectedValues.regionLevel !== newSelectedValues.regionLevel && newSelectedValues.regionLevel !== -1) {
       this.props.fetchRegions(newSelectedValues.regionLevel)
+    }
+
+    if ((oldSelectedValues.region !== newSelectedValues.region && newSelectedValues.region !== -1) &&
+      newSelectedValues.scenarioCollection !== -1) {
+      this.props.fetchScenarioCollectionData(newSelectedValues.scenarioCollection, newSelectedValues.region)
     }
 
     if (newSelectedValues.scenarioCollection !== oldSelectedValues.scenarioCollection && newSelectedValues.scenarioCollection !== -1) {
@@ -326,7 +332,8 @@ const mapStateToProps = state => ({
   indicatorCategories: state.data.indicatorCategories,
   timePeriods: state.data.timePeriods,
   selectedValues: state.data.selectedValues,
-  translate: getTranslate(state.locale)
+  translate: getTranslate(state.locale),
+  currentLanguage: getActiveLanguage(state.locale).code
 })
 
 const mapDispatchToProps = {

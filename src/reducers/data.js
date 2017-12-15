@@ -1,5 +1,6 @@
 import reduce from 'utils/reduce'
 import * as ActionTypes from '../constants/ActionTypes'
+import { selectIndicators } from '../actions/data'
 
 const initialState = {
   regionLevels: [],
@@ -31,7 +32,14 @@ const setPending = (state, { payload }) => ({
 })
 
 const demoReducer = reduce(initialState, {
-  [ActionTypes.FETCH_REGION_LEVELS]: setPending,
+  [ActionTypes.FETCH_REGION_LEVELS]: (state, { payload }) => ({
+    selectedValues: {
+      ...state.selectedValues,
+      regionLevel: -1
+    },
+    pending: true,
+    error: null
+  }),
   [ActionTypes.FETCH_REGION_LEVELS + '_ERROR']: setError,
   [ActionTypes.FETCH_REGION_LEVELS + '_SUCCESS']: (state, { payload }) => ({
     ...initialState,
@@ -42,15 +50,7 @@ const demoReducer = reduce(initialState, {
     }
   }),
 
-  [ActionTypes.FETCH_REGIONS]: (state, { payload }) => ({
-    pending: true,
-    error: null,
-    selectedValues: {
-      ...state.selectedValues,
-      regionLevel: -1,
-      scenarioCollection: -1
-    }
-  }),
+  [ActionTypes.FETCH_REGIONS]: setPending,
   [ActionTypes.FETCH_REGIONS + '_ERROR']: setError,
   [ActionTypes.FETCH_REGIONS + '_SUCCESS']: (state, { payload }) => ({
     ...initialState,
